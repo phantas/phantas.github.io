@@ -1,0 +1,886 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Shared libraries</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.44"><LINK
+REV="MADE"
+HREF="mailto:Paula.Valenca+www@cern.ch"><LINK
+REL="HOME"
+TITLE="Developing with plugins and components"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Introduction"
+HREF="intro.html"><LINK
+REL="NEXT"
+TITLE="Plugins"
+HREF="plugins.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><META
+NAME="Author"
+CONTENT="Paula Valenca"></HEAD
+><BODY
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Developing with plugins and components</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="intro.html"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="plugins.html"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="SHARED"
+>Shared libraries</A
+></H1
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="BASIC"
+>Basic concepts</A
+></H2
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><A
+NAME="SHLIBDEF"
+><B
+>Shared library</B
+></A
+></DT
+><DD
+><P
+>a block of code, loaded on request, providing 
+	    data types and procedures
+            </P
+></DD
+></DL
+></DIV
+><P
+>Basically, a <I
+CLASS="EMPHASIS"
+>library</I
+> is a set 
+      of functions and/or structures to be used by applications. For example,
+      if a programmer wishes to use more complex mathematical functions in C 
+      like <TT
+CLASS="FUNCTION"
+>sin</TT
+> he would have to use the library 
+      <B
+CLASS="COMMAND"
+>libm</B
+> where this and other functions are defined.
+      To do so, he can link the library in the compilation stage, using the 
+      <B
+CLASS="COMMAND"
+>-l</B
+> option with the name of the library (without the 
+      lib prefix and the extension: in this case, <B
+CLASS="COMMAND"
+>-lm</B
+>).
+      </P
+><P
+>A <I
+CLASS="EMPHASIS"
+>shared</I
+> library opposes to a
+      <I
+CLASS="EMPHASIS"
+>static</I
+> one in the sense that the library is
+      only loaded at runtime and not in the compilation stage. So, while
+      in static libraries the program carries the library code, when linked
+      to a shared one the library code is not present and is only loaded
+      into memory when needed.
+      </P
+><P
+>One of the named advantages of shared libraries, and also 
+      another characteristic that differs them from static ones,
+      is the fact that the system has, at most, one copy of the library's
+      code per library. When loading, the system first checks if there
+      is already a copy of the library on memory. The code is only
+      copied if there is none, while as in static the code is included
+      in every compiled program to which the library is linked.
+      </P
+><P
+>So, if the program doesn't carry the library's code, when
+      is it loaded? There are two alternatives:
+      </P
+><P
+></P
+><UL
+><LI
+><P
+>automatically at the start of the process and, thus, only
+          unloaded at the end: the library must be linked at compilation
+          stage;
+          </P
+></LI
+><LI
+><P
+>by request of the program itself (using, for example,
+          <TT
+CLASS="FUNCTION"
+>dlopen()</TT
+>): the code can be loaded and
+          unloaded in the middle of the process or not even loaded at
+          all; furthermore, the library is not linked at compilation
+          stage;
+          </P
+></LI
+></UL
+><P
+></P
+><P
+>A small example at the end of this section will illustrate
+      these concepts.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="PROSCONS"
+>Advantages and disadvantages</A
+></H2
+><P
+>But why use a shared library instead of a static one? And
+      why use demand loading instead of automatic loading or the other
+      way around? Shared libraries bring a number of advantages...
+      </P
+><P
+></P
+><UL
+><LI
+><P
+>libraries are only loaded at run time (thus, the 
+          possibility to change the library without having to 
+          recompile the end application);
+          </P
+></LI
+><LI
+><P
+>lighter applications and saving of space (since
+          the application doesn't carry the library's code);
+          </P
+></LI
+></UL
+><P
+>In particular, <I
+CLASS="EMPHASIS"
+>demand loading</I
+> of
+      a shared library can be very useful</P
+><P
+></P
+><UL
+><LI
+><P
+>as stated before it is the application itself which
+          requests the loading: the code can be loaded and unloaded
+          at any given stage or not loaded at all; this is particularly
+          useful when the program may use resources from several 
+          libraries but not necessarily at that moment, thus, avoiding
+          that dozens of libraries that are not being used would be
+          wasting memory;
+          </P
+></LI
+><LI
+><P
+>since the library is not linked at compilation stage
+          the application doesn't have to know it beforehand: for 
+          example, all the libraries can be put in a certain 
+          directory where the application will fetch them; this
+          enables that resources can be added or changed without 
+          touching the application itself;
+          </P
+></LI
+></UL
+><P
+>But they have a cost. Also, some problems may arise and 
+      should be taken in account.
+      </P
+><P
+></P
+><UL
+><LI
+><P
+>First, errors only show at runtime. This makes
+          the debugging more difficult but also imposes some care on
+          moving libraries and changing them;
+          </P
+></LI
+><LI
+><P
+>Creating a shared library is more complex and
+          requires a few number of flags and details. However,
+          this can be easily overcome (see <A
+HREF="shared.html#LIBTOOL"
+><I
+>Libtool</I
+></A
+>);
+          </P
+></LI
+><LI
+><P
+>The dynamic loading obliges the code to be
+          <I
+CLASS="EMPHASIS"
+>Platform Independent Code</I
+>(PIC).
+          This makes the library heavier so, although applications
+          are lighter, space is only actually saved if there is
+          more than one application linked or there is demand loading;
+          </P
+></LI
+><LI
+><P
+>The resources that demand loading enables (see above)
+          also bring dangerous situations:</P
+><P
+></P
+><UL
+><LI
+><P
+>What happens if the program doesn't find the
+              library expected? The error can occur at anytime of
+              the process life and not at the beginning as in automatic
+              loading;</P
+></LI
+><LI
+><P
+>How does the program know which interface the
+              library provides? If it is defined beforehand, how to
+              ally versioning and heterogeneity of libraries with this
+              prior knowledge without having to touch the application?
+              </P
+></LI
+></UL
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="DEVELOP"
+>Developing a shared library</A
+></H2
+><P
+>Developing a shared library, <I
+CLASS="EMPHASIS"
+>as is</I
+>,
+      is generally more difficult than developing a static one. The
+      complexity increases in a great amount when trying to make it
+      platform independent and easily built (a good user interface).
+      There are, however, some very powerful utilities that not only
+      simplify this procedure but are also greatly recommended since
+      they produce a standard, compliant and robust final product.
+      Their use is quite straightforward and apply to static ones
+      as well.
+      </P
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AUTO"
+>Autoconf and Automake</A
+></H3
+><P
+>These two utilities combined are especially adequate for
+        projects intended to be easily developed, used and installed 
+        in different platforms, helping to provide:
+        </P
+><P
+></P
+><UL
+><LI
+><P
+>platform independence and/or ability to check for
+	    the features needed by the package;
+            </P
+></LI
+><LI
+><P
+>a custom and straightforward user interface when
+	    installing the package;
+            </P
+></LI
+><LI
+><P
+>an easy maintenance of Makefile (thus, helping
+            compilation)</P
+></LI
+></UL
+><P
+>To configure the software package, a <TT
+CLASS="FILENAME"
+>configure
+        </TT
+> script is generated from a file called <TT
+CLASS="FILENAME"
+>        configure.in</TT
+> created by the developer. This file
+        should contain invocations to Autoconf macros that test the
+        system features needed by the package. <B
+CLASS="COMMAND"
+>Autoscan</B
+>
+        can be used to help write this file.
+        </P
+><P
+>Automake assumes that Autoconf is being used and is used
+        to produce <TT
+CLASS="FILENAME"
+>Makefile.in</TT
+> files from
+        <TT
+CLASS="FILENAME"
+>Makefile.am</TT
+> files created by the
+        developer. When the <TT
+CLASS="FILENAME"
+>configure</TT
+> script
+        is run these files will originate <TT
+CLASS="FILENAME"
+>Makefile</TT
+>'s.
+        These <TT
+CLASS="FILENAME"
+>Makefile.am</TT
+> files consist mainly
+        of a series of <B
+CLASS="COMMAND"
+>make</B
+> macro definitions.
+        </P
+><P
+>The final user will only have to type</P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;$ ./configure
+   &nbsp;$ make
+   &nbsp;$ make install</PRE
+></TD
+></TR
+></TABLE
+><P
+>Autoconf and Automake manuals in the
+        <A
+HREF="http://www.gnu.org/doc/doc.html"
+TARGET="_top"
+>GNU documentation
+        </A
+> provide a very good explanation on how to use these
+        tools ( see <A
+HREF="shared.html#SHAREDLINKS"
+><I
+>Links and further information</I
+></A
+>) 
+        </P
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="LIBTOOL"
+>Libtool</A
+></H3
+><P
+>Libtool is a tool for developing libraries that 
+	provides the complete functionality of a host type in a
+	generic interface but hiding the confusing and complex
+	details. It can be used together with Autoconf and 
+	Automake.</P
+><P
+>Some points about libtool:</P
+><P
+></P
+><UL
+><LI
+><P
+>Libtool is based on the paradigm that <SPAN
+CLASS="QUOTE"
+>"	    libraries are programs with multiple entry points,
+	    and more formally defined interfaces."</SPAN
+>; in
+	    fact, the rules to create a library look much like
+	    a compilation of a program;
+	    </P
+></LI
+><LI
+><P
+>By default, libtool tries to produce both a static
+	    and shared library; if the system doesn't permit shared
+	    libraries, it produces a static version;
+	    </P
+></LI
+><LI
+><P
+>When creating the library, wrappers are used (for
+	    extra meta-data, since the meta-data stored varies with
+	    the platforms) as well as temporary directories for storing
+	    the libraries.
+	    </P
+></LI
+><LI
+><P
+>Libtool provides several facilities:
+	    </P
+><P
+></P
+><UL
+><LI
+><P
+>Creating object files (including PIC)</P
+></LI
+><LI
+><P
+>Linking libraries</P
+></LI
+><LI
+><P
+>Linking executables</P
+></LI
+><LI
+><P
+>Debugging executables</P
+></LI
+><LI
+><P
+>Installing libraries</P
+></LI
+><LI
+><P
+>Installing executables</P
+></LI
+></UL
+></LI
+></UL
+><P
+>In <A
+HREF="shared.html#EXAMPLE"
+><I
+>A small example</I
+></A
+>, it's illustrated the
+	use of libtool to create a library.
+	</P
+><P
+><A
+HREF="http://www.gnu.org/doc/doc.html"
+TARGET="_top"
+>GNU documentation
+        </A
+> has also a very good, step by step, manual of libtool 
+	(see <A
+HREF="shared.html#SHAREDLINKS"
+><I
+>Links and further information</I
+></A
+>)
+	</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="EXAMPLE"
+>A small example</A
+></H2
+><P
+>To illustrate, here is the development of a very small library,
+      <TT
+CLASS="FILENAME"
+>libgarfield.so</TT
+>, from the files
+      <A
+HREF="examples/eating.c"
+TARGET="_top"
+><TT
+CLASS="FILENAME"
+>eating.c</TT
+></A
+> and 
+      <A
+HREF="examples/sleeping.c"
+TARGET="_top"
+><TT
+CLASS="FILENAME"
+>sleeping.c</TT
+></A
+>
+      with the header file <A
+HREF="examples/garfield.h"
+TARGET="_top"
+><TT
+CLASS="FILENAME"
+>      garfield.h</TT
+></A
+>. An executable called 
+      <TT
+CLASS="FILENAME"
+>garfield</TT
+> is created by linking 
+      <A
+HREF="examples/main.c"
+TARGET="_top"
+><TT
+CLASS="FILENAME"
+>main.c</TT
+></A
+> to 
+      <TT
+CLASS="FILENAME"
+>libgarfield.la</TT
+> (which is a wrapper to 
+      <TT
+CLASS="FILENAME"
+>libgarfield.so</TT
+>).
+      </P
+><P
+>Autoconf and automake are not used here, only libtool.
+      It is presented the steps for the most common actions; see the
+      libtool manual for the explanation of these steps and other
+      possible actions that can be performed (see 
+      <A
+HREF="shared.html#SHAREDLINKS"
+><I
+>Links and further information</I
+></A
+>).</P
+><P
+>Creating object files. Note that besides the normal object
+      files it is also created <TT
+CLASS="FILENAME"
+>.lo</TT
+> files which are
+      PIC object files needed when creating the shared library.</P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;$ gcc -g -O -c main.c 
+   &nbsp;$ libtool gcc -g -O -c eating.c 
+   &nbsp;mkdir .libs
+   &nbsp;gcc -g -O -c eating.c  -fPIC -DPIC -o .libs/eating.lo
+  5&nbsp;gcc -g -O -c eating.c -o eating.o &#62;/dev/null 2&#62;&#38;1
+   &nbsp;mv -f .libs/eating.lo eating.lo
+   &nbsp;$ libtool gcc -g -O -c sleeping.c 
+   &nbsp;rm -f .libs/sleeping.lo
+   &nbsp;gcc -g -O -c sleeping.c  -fPIC -DPIC -o .libs/sleeping.lo
+ 10&nbsp;gcc -g -O -c sleeping.c -o sleeping.o &#62;/dev/null 2&#62;&#38;1
+   &nbsp;mv -f .libs/sleeping.lo sleeping.lo</PRE
+></TD
+></TR
+></TABLE
+><P
+>Linking libraries. The libraries are put in the 
+      <TT
+CLASS="FILENAME"
+>.libs/</TT
+> directory and <TT
+CLASS="FILENAME"
+>libgarfield.la
+      </TT
+> is created in place which, as was said, is a wrapper
+      for the shared library.</P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;$ libtool gcc -g -O -o libgarfield.la eating.lo sleeping.lo \
+   &nbsp;	 -rpath /usr/local/lib
+   &nbsp;rm -fr .libs/libgarfield.la .libs/libgarfield.* .libs/libgarfield.*
+   &nbsp;gcc -shared  eating.lo sleeping.lo  -lc  -Wl,-soname -Wl,libgarfield.so.0 -o .libs/libgarfield.so.0.0.0
+  5&nbsp;(cd .libs &#38;&#38; rm -f libgarfield.so.0 &#38;&#38; ln -s libgarfield.so.0.0.0 libgarfield.so.0)
+   &nbsp;(cd .libs &#38;&#38; rm -f libgarfield.so &#38;&#38; ln -s libgarfield.so.0.0.0 libgarfield.so)
+   &nbsp;ar cru .libs/libgarfield.a  eating.o sleeping.o 
+   &nbsp;ranlib .libs/libgarfield.a
+   &nbsp;creating libgarfield.la
+ 10&nbsp;(cd .libs &#38;&#38; rm -f libgarfield.la &#38;&#38; ln -s ../libgarfield.la libgarfield.la)</PRE
+></TD
+></TR
+></TABLE
+><P
+>Linking the executable. The executable is put inside
+      <TT
+CLASS="FILENAME"
+>.libs/</TT
+> and a wrapper script is created in place.
+      </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;$ libtool gcc -g -O -o garfield main.o libgarfield.la 
+   &nbsp;gcc -g -O -o .libs/garfield main.o .libs/libgarfield.so -Wl,--rpath -Wl,/usr/local/lib
+   &nbsp;creating garfield</PRE
+></TD
+></TR
+></TABLE
+><P
+>Installing libraries. <TT
+CLASS="FILENAME"
+>libgarfield.la</TT
+>
+      is also installed with the static and shared libraries. All the
+      necessary operations are usually done (like, for example, calling
+      <B
+CLASS="COMMAND"
+>ldconfig</B
+>) but running 
+      <B
+CLASS="COMMAND"
+>libtool -n --finish <TT
+CLASS="FILENAME"
+>libdir</TT
+></B
+>
+      will give further hints on what to do (in this example, the 
+      installation command already gives this information).</P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;$ libtool install -c libgarfield.la /usr/local/lib/libgarfield.la
+   &nbsp;install -c .libs/libgarfield.so.0.0.0 /usr/local/lib/libgarfield.so.0.0.0
+   &nbsp;(cd /usr/local/lib &#38;&#38; rm -f libgarfield.so.0 &#38;&#38; ln -s libgarfield.so.0.0.0 libgarfield.so.0)
+   &nbsp;(cd /usr/local/lib &#38;&#38; rm -f libgarfield.so &#38;&#38; ln -s libgarfield.so.0.0.0 libgarfield.so)
+  5&nbsp;install -c .libs/libgarfield.lai /usr/local/lib/libgarfield.la
+   &nbsp;install -c .libs/libgarfield.a /usr/local/lib/libgarfield.a
+   &nbsp;ranlib /usr/local/lib/libgarfield.a
+   &nbsp;chmod 644 /usr/local/lib/libgarfield.a
+   &nbsp;PATH="$PATH:/sbin" ldconfig -n /usr/local/lib
+ 10&nbsp;----------------------------------------------------------------------
+   &nbsp;Libraries have been installed in:
+   &nbsp;   /usr/local/lib
+   &nbsp;
+   &nbsp;If you ever happen to want to link against installed libraries
+ 15&nbsp;in a given directory, LIBDIR, you must either use libtool, and
+   &nbsp;specify the full pathname of the library, or use `-LLIBDIR'
+   &nbsp;flag during linking and do at least one of the following:
+   &nbsp;   - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+   &nbsp;     during execution
+ 20&nbsp;   - add LIBDIR to the `LD_RUN_PATH' environment variable
+   &nbsp;     during linking
+   &nbsp;   - use the `-Wl,--rpath -Wl,LIBDIR' linker flag
+   &nbsp;   - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+   &nbsp;
+ 25&nbsp;See any operating system documentation about shared libraries for
+   &nbsp;more information, such as the ld(1) and ld.so(8) manual pages.
+   &nbsp;----------------------------------------------------------------------</PRE
+></TD
+></TR
+></TABLE
+><P
+>Other actions like debugging are also easily done and
+      take advantage of the wrapper scripts.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="SHAREDLINKS"
+>Links and further information</A
+></H2
+><P
+>Autoconf and it's manual can be found at
+      <A
+HREF="http://www.gnu.org/software/autoconf/autoconf.html"
+TARGET="_top"
+>      http://www.gnu.org/software/autoconf/autoconf.html</A
+>.</P
+><P
+>Automake and it's manual can be found at
+      <A
+HREF="http://www.gnu.org/software/automake/automake.html"
+TARGET="_top"
+>      http://www.gnu.org/software/automake/automake.html</A
+>.</P
+><P
+>Libtool's homepage is located at
+      <A
+HREF="http://www.gnu.org/software/libtool/libtool.html"
+TARGET="_top"
+>      http://www.gnu.org/software/libtool/libtool.html</A
+>.</P
+><P
+>The <B
+CLASS="COMMAND"
+>man</B
+> pages of <TT
+CLASS="FUNCTION"
+>dlopen
+      </TT
+>, <B
+CLASS="COMMAND"
+>ld</B
+>, <B
+CLASS="COMMAND"
+>ldconfig</B
+>
+      also provide useful information.</P
+><P
+>General description and implementation information on
+      shared libraries can be found in 
+      <A
+HREF="http://users.actcom.co.il/~choo/lupg/tutorials/libraries/unix-c-libraries.html"
+TARGET="_top"
+>Building and Using Static and Shared "C" Libraries</A
+> 
+      and <A
+HREF="http://www.unix.digital.com/faqs/publications/base_doc/DOCUMENTATION/HTML/AA-PS30D-TET1_html/peg5.html"
+TARGET="_top"
+>Shared Libraries (Section 4)</A
+>.
+      </P
+><P
+>In the GLib Reference Manual, there is a section describing
+      the <B
+CLASS="COMMAND"
+>gmodule</B
+> library, 
+      <A
+HREF="http://developer.gnome.org/doc/API/glib/glib-dynamic-loading-of-modules.html"
+TARGET="_top"
+>Dynamic Loading of Modules</A
+>.
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="intro.html"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="plugins.html"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Introduction</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Plugins</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

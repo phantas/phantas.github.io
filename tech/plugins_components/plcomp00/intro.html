@@ -1,0 +1,373 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Introduction</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.44"><LINK
+REV="MADE"
+HREF="mailto:Paula.Valenca+www@cern.ch"><LINK
+REL="HOME"
+TITLE="Developing with plugins and components"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Developing with plugins and components"
+HREF="index.html"><LINK
+REL="NEXT"
+TITLE="Shared libraries"
+HREF="shared.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><META
+NAME="Author"
+CONTENT="Paula Valenca"></HEAD
+><BODY
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Developing with plugins and components</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="shared.html"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="INTRO"
+>Introduction</A
+></H1
+><P
+>One of the biggest problems developers have to handle nowadays
+    is on how to cope with the enormous size and complexity of an 
+    increasing number of current projects. These projects involve several
+    people, possibly, in different teams and locations, developing an 
+    heterogeneous software where the different parts have to interact 
+    consistently, thus requiring a perfect agreement between teams. 
+    The problem gets worst when considering that the product will have 
+    to be maintained afterwards or even extended.
+    </P
+><P
+>It is common knowledge that from a certain point it is 
+    impossible to have the application as a monolithic block. It is 
+    necessary to divide the project in different parts, as independent 
+    as possible, so that joining the work of two teams is as easy and 
+    consistent as possible.
+    Dividing the project is also necessary to limit the scope of the
+    problem being handled, enabling easier and clearer development and 
+    maintenance. For example, consider a product that captures, evaluates
+    and stores some type of data. Now, consider that the way the data is 
+    stored is changed or there is a bug somewhere. Having clear 
+    distinctions between the different functionalities clearly makes
+    this task easier and protects the rest of the product.
+    But having a project divided in different parts brings the
+    problem of architecting the parts, i.e., joining the different
+    parts together. Teams are only familiar with their parts and 
+    communication between teams tends to be short. Also, it is very
+    common to have the project spread in different platforms and 
+    locations.
+    </P
+><P
+>On the other hand, it is also usually said that, if a certain 
+    functionality is needed and it is already available somewhere, one 
+    should reuse this implementation and not "reinvent the wheel". 
+    This should account also for using/developing products aside 
+    especially for a certain task instead of integrating that 
+    functionality in the main application.
+    Besides the reusability of code, it also gives more flexibility 
+    (it is easier to add functionality this way than rebuilding the
+    all application) and a simpler and clearer main application 
+    (instead of having a confusing, heterogeneous and heavy one).
+    But this requires some conditions from both parts that should be
+    considered before the development of either one.
+    For instance, consider the last example. Imagine that in the
+    evaluation stage, some graphics need to be generated. There are
+    a big number of applications that draw graphics and are probably
+    preferred than to add "from scratch" graphics functionality to the
+    application. But the main problem is whether the graphic 
+    program is easily integrated which, most of the times, is not the case.
+    </P
+><P
+>Continuing on the subject of adding/changing functionality and
+    considering the same example, imagine that the data it handles is
+    very heterogeneous and, thus, the way this data is evaluated, for
+    example, is different according to the type of data. When the set
+    of the types handled is small and doesn't change and the way they
+    are handled is also static, the final product is a bit complex
+    but handleable. But when this is not the case we come upon several
+    problems:
+    </P
+><P
+></P
+><UL
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Flexibility and consistency</I
+>. How to
+        add/change/remove functionality in a flexible manner without 
+        compromising the consistency of the application and, preferably, 
+        not having to rebuild all the application?</P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Efficiency</I
+>. How to do this in a way
+        that doesn't compromise to much the efficiency, e.g., there
+        isn't a waste of resources since most will only be used for a
+        certain period or not even used at all in a session?</P
+></LI
+></UL
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN56"
+>Objectives</A
+></H2
+><P
+>Recently, two paradigms have evolved that are
+      especially aimed at this type of problems: 
+      <I
+CLASS="EMPHASIS"
+>Plugins</I
+><A
+NAME="PLUG-IN"
+HREF="#FTN.PLUG-IN"
+>[1]</A
+> and <I
+CLASS="EMPHASIS"
+>Components</I
+>.
+      But, in order to understand why the need for this technology arose, 
+      we can compile, from the above problems, a list of objectives we would 
+      like to fulfil. It is easy to see, looking at the nature of the 
+      problems and the following list, why these new paradigms have
+      become so popular.</P
+><P
+></P
+><DL
+><DT
+><I
+CLASS="FIRSTTERM"
+>Modularity</I
+></DT
+><DD
+><P
+>Modularity is one of the keywords. How to divide
+          an utility in different parts that obey the rules of modularity
+          (independence, encapsulation) and interact with each other in
+          a desired way. A special case would be to divide an utility in
+          its main part (management) and its several branches, thus,
+          separating functionality.
+	  </P
+></DD
+><DT
+><I
+CLASS="FIRSTTERM"
+>Dynamic functionality independent of the 
+          main part</I
+></DT
+><DD
+><P
+>In other words, to be able to add/change/remove
+          functionality of an utility without touching the main part. As
+          an add-on, to be able to do that on runtime. This implies that
+          the application shouldn't be rebuild and, further more, compiled,
+          each time these changes take place.
+          </P
+></DD
+><DT
+><I
+CLASS="FIRSTTERM"
+>Independent development of parts</I
+></DT
+><DD
+><P
+>The development of each part of a project should 
+            be independent from the other ones. This obliges the 
+            communication between parts to be transparent and standard.
+            Also, each part should be able to cope with the others
+            being in different platforms and locations. Basically,
+            each part shouldn't have to worry about how others are
+            implemented and located.
+            </P
+></DD
+><DT
+><I
+CLASS="FIRSTTERM"
+>Communication between applications
+          </I
+></DT
+><DD
+><P
+>This means being able to embed an application A that
+            provides a desired functionality inside an application B
+            thus reusing code and providing a lighter and simpler
+            application B.
+            </P
+></DD
+></DL
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>These are, of course, very different objectives which 
+      rarely are assembled together. This is not intended to find a
+      unique solution that covers all of them.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>Using plugins and components enables us to fulfil this 
+      objectives in a clever and transparent way (when used correctly).
+      How this is done is the subject of the next chapters. But first
+      it is necessary to have a look at shared libraries.</P
+></DIV
+></DIV
+><H3
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.PLUG-IN"
+HREF="intro.html#PLUG-IN"
+>[1]</A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>It is 
+      also very usual to write <I
+CLASS="EMPHASIS"
+>Plug-in</I
+> instead 
+      of Plugin.</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="index.html"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="shared.html"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Developing with plugins and components</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Shared libraries</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB" lang="en-GB">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="description" content="Paula Valenca's webpage" />
+	<meta name="keywords" content="valenca" />
+	<link rel="stylesheet" href="../default.css" type="text/css" media="all" />
+	<link rel="Shortcut Icon" type="image/x-icon" href="../imagens/favicon.ico" />
+
+	<title>Paula Valenca's webpage</title>
+</head>
+
+<body>
+	<div class="container">
+		<div class="content">
+			<h1>Tech and maths</h1>
+			<hr />
+
+			<p><i>This page collects some past articles and recent presentations on subjects of IT and Mathematics. Some of my "hobby" projects and hacks can also be found here.</i></p>
+
+			<ul>
+				<li>
+					<p><i>Invited talks and other recent presentations</i></p>
+
+					<ul>
+						<li>
+							<p><i><a href="graal31407.pdf">"Maths Holy Grail will not bring disaster to the Internet"</a></i> (portuguese) - Day of the Pi <i>(inv.)</i>, University of Minho 2007.<br />
+							A general audience presentation attempting to demystify the <b>Riemann Hypothesis</b> and its applications to Information Security, among others.</p>
+						</li>
+
+						<li>
+							<p><i><a href="isos060507.pdf">"Information Security in Open Systems"</a></i>, OpenBSD Meeting <i>(inv.)</i>, Coimbra 2007.<br />
+							It was my intent in this talk to bring a discussion on current enforcement of <b>Information Security</b> and the issues arising from its path from academia, to industry, to the user.</p>
+						</li>
+						<li>
+							<p>I gave two lightning talks in the <a href="http://workshop.perl.pt/ptpw2008/" target="_new">Portuguese Perl Workshop</a> (Braga, 2008): <i><a href="PPW-LJ.pdf">Hacking a friends list feed for LiveJournal</a></i> and <i><a href="PPW-RSB.pdf">Remote Secure Backups</a></i>.
+							</p>
+						</li>
+					</ul>
+				</li>
+
+				<li>
+					<p><i>On the subject of Plugins and Components</i> - <a href="http://www.cern.ch" target="_new">CERN</a>, 2000. The material below should also be accessible through CERN website.</p>
+
+					<p>It bares reminding it was published in 2000 and many of these topics - middleware, being a critical example - have been hot subjects in the last few years. As such both the community and my views on the subject have evolved from the ones presented below. The same applies to the tools referred throughout.</p>
+
+					<ul>
+						<li><a href="plugins_components/plcomp00/index.html">Developing with <b>plugins</b> and <b>components</b></a> <a href="plugins_components/plcomp00/index.html">multi-page</a> <a href="plugins_components/plcomp00.html">single-page</a> <a href="plugins_components/plcomp00.pdf">pdf</a> (Tutorial)</li>
+
+						<li><a href="plugins_components/cnl0200.html">Developing with <b>plugins</b> and <b>components</b></a> <a href="plugins_components/cnl0200/index.html">multi-page</a> <a href="plugins_components/cnl0200.html">single-page</a> <a href="plugins_components/cnl0200.pdf">pdf</a> (article appearing in CERN Computer News Letter of May/July 2000)</li>
+					</ul>
+				</li>
+
+				<li>
+					<p><i>Hacks and Hobby projects</i>. All of the below is provided as is, use it at your own risk.</p>
+
+					<ul>
+						<li>
+							<p><a href="hacks/ljfriends"><b>ljfriends.pl</b></a> - <a href="http://www.livejournal.com">LiveJournal</a> provides feeds for individual journals but not to a user's friends page. This Perl script generates a RSS feed for said page.</p>
+
+							<p><b>Requires</b>: a paid, permanent or early adopter account, unfortunately... and a <i>working</i> installation of the Perl module HTML::Tidy (you may run into problems here)</p>
+
+							<p><b>Warning</b>: this script is not endorsed by <a href="http://www.livejournal.com">LiveJournal</a> and is provided as is. In particular, <i>do not make the script usable publicly in a server</i>- there is a security loophole that may be used to hang or crash your script/server.</p>
+						</li>
+
+						<li>
+							<p><a href="hacks/secure_backup.tar.gz"><b>secure_backup</b></a> - with the popularity of web services and remote locations, I have recently been playing with the idea of securely keeping remote backups of data. It is still very much in a conceptual stage ( I have also heard of some recent applications that appear to target at this, I haven't looked at them properly).</p>
+
+							<p>In the meantime, this package includes a hack shell script that does the job. It efficiently and securely packs and syncs data to a remote location. Only altered chunks of data are repacked and synced and data is never present in an unencrypted form other than locally - the data is already encrypted when synced. <i>However, it does not yet provide an interface to recover the data from the backups (for now, it must be done "by hand"). </i></p>
+
+							<p>The typical backup to tarballs script is also included.</p>
+						</li>
+						<li><p><a href="hacks/euro"><b>euro.pl</b></a> - if you play EuroMillions <i>aka</i> Lotto, this little Perl script checks combinations against the winning combination (fetched on the background) and even gives an estimate to the prize if one is eligible. Yes, I'll translate it to English at some point.</p></li>
+					</ul>
+				</li>
+			</ul>
+			<hr />
+		</div>
+
+		<ul class="menu">
+			<li><a href="http://www.paulavalenca.org/">home</a></li>
+
+			<li><a href="../research/">research</a></li>
+
+			<li class="active"><a href="./">tech</a></li>
+
+			<li><a href="../other.html">other</a></li>
+
+			<li><a href="../about.html">me</a></li>
+		</ul>
+
+		<div class="footer">
+			© Paula Valenca 2007
+		</div>
+
+	</div>
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>What to choose</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.44"><LINK
+REV="MADE"
+HREF="mailto:Paula.Valenca+www@cern.ch"><LINK
+REL="HOME"
+TITLE="Developing with plugins and components"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Components"
+HREF="components.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><META
+NAME="Author"
+CONTENT="Paula Valenca"></HEAD
+><BODY
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Developing with plugins and components</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="components.html"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+>&nbsp;</TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="COMPARING"
+>What to choose</A
+></H1
+><P
+>"Plugins" and "components" are two words that are very often used
+    in computing world. But when someone searches for information on them,
+    he will find a big amount of references but hardly any concrete and
+    elucidative concept.
+    </P
+><P
+>The problem regarding plugins is that, most of the information
+    one finds is dependent of a particular implementation. A typical
+    definition of a plugin would be something like "A piece of software
+    to be added to application X to do the Y-type of jobs". Or, when one
+    finds a definition that is independent of application X, Y or Z, it
+    would be something like "A piece of software to be plugged to an
+    application" that, although correct, doesn't carry much information.
+    </P
+><P
+>Components information, on the other hand, is usually so abstract
+    and general that one can regard almost everything as being components. 
+    And, the same way there wasn't much consensus, on the beginning, on what 
+    constitutes an object, there isn't also much consensus on what a component 
+    is.
+    </P
+><P
+>One of the main purposes of this tutorial was to achieve a precise,
+    short and clear definition on both paradigms. The goal was to get a
+    description general enough not to be tied to implementation issues but
+    yet precise enough to characterize some piece of software as being
+    an implementation of this concept and providing a certain set of
+    functionalities instead of just an adjective.</P
+><P
+>But it is quickly found that a definition, as good as
+    it might be, is not enough to characterize a paradigm. For example,
+    if a user wants to program in an object-oriented way, knowing
+    what an object is in this context, is not enough. To learn how
+    to program in an object-oriented way, the user also needs to
+    know the notions of instances and classes, signature/abstract,
+    heritage, inclusion of all the methods and data that identify 
+    with it and, even before that, modularity and hiding the 
+    implementation from outside the object. These are all rules
+    and characteristics that state to what an object-oriented
+    application should comply to be considered one.
+    After learning object-oriented principles like the above and 
+    object-oriented languages like Java or C++ it is very hard
+    to imagine it in another way. But if, for example, it had been
+    characterized the same way but without heritage would that
+    impede that the resulting blocks of software could still be
+    called objects?
+    Of course not. So why this set of rules?
+    </P
+><P
+>Because of the behavior that is expected. With the
+    concept comes a list of wished functionality. It is
+    expected that we can say that this "object", 
+    <I
+CLASS="EMPHASIS"
+>Mickey</I
+>, is an instance of the "class" 
+    <I
+CLASS="EMPHASIS"
+>Mouse</I
+> but it also inherits characteristics 
+    from the "interface" <I
+CLASS="EMPHASIS"
+>Comic</I
+>.
+    It is also expected that it includes the data related to it 
+    (relevant to the case) and ways to interact with it, that is, 
+    methods. For example, its age and a method to ask to resolve 
+    a mystery!
+    This set of rules not only comply with the general concept
+    but also help to precise it and guarantee that the product
+    will provide the expected functionality in a standard way.
+    </P
+><P
+>But the user also needs the environment to develop.
+    Furthermore, having just the theory on the paper is not
+    very useful. Anyone who learns object-oriented programming
+    does so while learning Java, C++ or some similar 
+    object-oriented language. Many people when referring to
+    object-oriented programming are actually referring to one
+    of the above languages.
+    It is very difficult to picture OO without some details of
+    the OO language most commonly used by the user. 
+    </P
+><P
+>So, arriving to a definition for plugins-based and
+    component-based programming is not enough and a set of
+    rules were compiled or elaborated to achieve this.
+    Also, there was some emphasis on the implementation
+    details so that the reader can more easily picture
+    these types of programming and develop immediately
+    with them.
+    </P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN890"
+>The aim of these paradigms</A
+></H2
+><P
+>There are always problems that are better solved
+      with one strategy than another one. A script language
+      is not very good to write Data Mining applications or
+      complex mathematical algorithms or an application like
+      a spreadsheet program. It is good for system management,
+      automatic jobs and setting configurations.
+      </P
+><P
+>Plugins are good for applications that have to
+      do tasks from a big and heterogeneous set. It is even
+      more powerful because it assumes that this set is not
+      known before hand. This enables further tasks to be assigned
+      to the application as long as the functionality to do
+      that task is provided. This brings several advantages:
+      </P
+><P
+></P
+><UL
+><LI
+><P
+>a lighter application since all the complexity
+          of the tasks is divided through the plugins</P
+></LI
+><LI
+><P
+>the code to handle a task is only loaded when
+          needed. If the set is big and not all the tasks
+          are being done this means less space used in memory.
+          </P
+></LI
+><LI
+><P
+>flexibility in the functionality added to the
+          application by plugins
+          </P
+></LI
+></UL
+><P
+>At CERN this type of applications are found very
+      frequently. The data generated is heterogeneous and is
+      common to find: <SPAN
+CLASS="QUOTE"
+>"if this is a particle a do A, a
+      particle b do B, ..., a particle z do Z"</SPAN
+>.
+      Having enormous <TT
+CLASS="FUNCTION"
+>case</TT
+> columns is
+      space consuming, complicated and provides few flexibility.
+      Plugins may be a good way to handle this. There are
+      also other situations similar where plugins can be a
+      good solution.
+      </P
+><P
+>Components are better aimed at complex, distributed
+      projects but can also apply to projects that usually sit
+      in only one computer but whose architecture OS clearly
+      divided in several separate parts that interact with
+      each other. It provides, among other things
+      (see <A
+HREF="components.html#KEYASP"
+><I
+>Key aspects and raised questions</I
+></A
+> in <A
+HREF="components.html"
+><I
+>Components</I
+></A
+>):
+      </P
+><P
+></P
+><UL
+><LI
+><P
+>standardized parts and services</P
+></LI
+><LI
+><P
+>few need of contact between teams designing
+          components
+          </P
+></LI
+><LI
+><P
+>independence of implementation and location</P
+></LI
+><LI
+><P
+>a good way to design the architecture and
+          abstract from the implementations details
+          </P
+></LI
+></UL
+><P
+>At CERN it is common to find big and complex distributed
+      projects. Some of these projects even have teams
+      in other places in the world developing parts of the
+      project. With the importance of these projects and
+      the volume of actions that the final product will have
+      to perform, a good design and separation between parts
+      is probably the most important aspect of the project.
+      If this is well done, changes can even be made to
+      one part without affecting the other parts.
+      </P
+><P
+>But</P
+><DIV
+CLASS="IMPORTANT"
+><P
+></P
+><TABLE
+CLASS="IMPORTANT"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/important.gif"
+HSPACE="5"
+ALT="Important"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>Care must be taken before choosing to use
+        them. Each has its advantages and disadvantages.
+        If it is the right choice to use one of them or which 
+        one to use depends on the project.
+        </P
+></TD
+></TR
+></TABLE
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN920"
+>Why comply with the sets of rules proposed?</A
+></H2
+><P
+>When developing either plugins or components,
+      there is a good list of requirements that must be met
+      and that were enumerated in the previous sections.
+      </P
+><P
+>It may seem, however, that some of this requirements
+      can be dispensed in some occasions.
+      For example, why use strategies like CORBA when it
+      doesn't seem to be necessary? For the same reasons used
+      at the beginning of this section to justify the need
+      to establish them.</P
+><P
+>If we want to make use of the benefits that this
+      technology enables, not complying with just one of the
+      requirements will make the plugin/component-based strategy
+      less robust and flexible. Regarding the example of the use
+      of CORBA-like strategies, if later on there would be a need
+      to have different platforms, for example, wrappers would
+      have to be written to do the work this technology is 
+      responsible for.
+      </P
+><P
+>Furthermore, Informatics Technology has evolved so
+      much that the enumerated requirements can be handled with
+      much less effort for the developer. The power that
+      CORBA gives to application overcomes, in a good amount,
+      the effort to use it.
+      </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN926"
+>Plugins and components: 
+      two popular and recent technologies</A
+></H2
+><P
+>Plugins and components, although they are very recent,
+      are now very popular. A search on the web will present
+      thousands of references to it.
+      </P
+><P
+>Most of the concepts used are not new but only
+      recently technology provided the means for them to evolve.
+      Plugins and components would not be what they are without
+      Middleware and shared libraries and many other facilities
+      available today.
+      </P
+><P
+>But although they are so recent, products like
+      Netscape, AutoCAD, the Windows and Linux desktops and
+      many others, are using them as an important part of the
+      product.
+      </P
+><P
+>Although they are combined in this document,
+      plugins and components are very different and each
+      has its particular advantages and disadvantages as
+      also having different scopes. Nevertheless there are
+      come common keywords that pop out in both.
+      </P
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><B
+>Modularity</B
+></DT
+><DD
+><P
+>separate a big problem in a set of small
+            problems: their results will be the building
+            blocks from which the final application is built
+            </P
+></DD
+><DT
+><B
+>Encapsulation</B
+></DT
+><DD
+><P
+>all the functionality needed by an unit 
+            should be integrated inside: thus, the unit can
+            be deployed independently as an all
+            </P
+></DD
+><DT
+><B
+>Interface contracts</B
+></DT
+><DD
+><P
+>specify precisely how parts can communicate
+            with each other: being a contract, both parts must
+            respect the commitment they made by offering the
+            functionality stated and keeping the interfaces has
+            static as possible
+            </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN945"
+>Finally</A
+></H2
+><P
+>It was the purpose of this document to be a tutorial
+      to this interesting and popular technology. 
+      There was an effort that this tutorial would
+      have both a good and complete theoretic part with precise and 
+      correct definitions and a complete characterization
+      of the paradigms, and a useful practical part by focusing
+      on important implementation aspects and providing simple
+      examples and references to useful tools and products. 
+      There was also an effort in presenting
+      the information in a clear way that would be both
+      complete and motivating.
+      </P
+><P
+>Although it was the purpose of this tutorial to
+      present a complete theory, this document is still an
+      introduction. Please refer to the links and references
+      provided throughout the document for a deeper 
+      understanding.
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="components.html"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>&nbsp;</TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Components</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>&nbsp;</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

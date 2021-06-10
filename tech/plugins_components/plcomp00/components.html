@@ -1,0 +1,1444 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Components</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.44"><LINK
+REV="MADE"
+HREF="mailto:Paula.Valenca+www@cern.ch"><LINK
+REL="HOME"
+TITLE="Developing with plugins and components"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Plugins"
+HREF="plugins.html"><LINK
+REL="NEXT"
+TITLE="What to choose"
+HREF="comparing.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><META
+NAME="Author"
+CONTENT="Paula Valenca"></HEAD
+><BODY
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Developing with plugins and components</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="plugins.html"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="comparing.html"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="COMPONENTS"
+>Components</A
+></H1
+><P
+>This section focus on the Component-based paradigm. It 
+    presents a precise definition which is complemented after by
+    a list of characteristics that a component should fulfill.
+    Since <I
+CLASS="EMPHASIS"
+>middleware</I
+> plays an important role
+    in components, a short overview of CORBA is also done.
+    Finally, Bonobo is used as an example.</P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN532"
+>Concept and examples</A
+></H2
+><P
+>There isn't much consensus in what constitutes a component.
+      A good yet still incomplete definition is Clemens Szyperski's
+      list of characteristic properties of a component:
+      </P
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><A
+NAME="COMPONENTDEF"
+><B
+>Component</B
+></A
+></DT
+><DD
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>A component is an indivisible unit of independent
+                deployment.
+                </P
+></LI
+><LI
+><P
+>A component is a unit of third-party composition.
+                </P
+></LI
+><LI
+><P
+>A component has no persistent state.
+                </P
+></LI
+></OL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/components.jpg"
+></IMG
+><DIV
+CLASS="CAPTION"
+><P
+>An illustration of the use of components</P
+></DIV
+></P
+></DIV
+><P
+>This definition may seem too general but basically constitutes
+      the core on what consists a component and has several implications.
+      This list will be complemented in the next section.
+      </P
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN552"
+>Some examples</A
+></H3
+><P
+>Imagine a big, complex and heterogeneous project divided
+	in different parts, each with its particular function and 
+	interacting with other parts of the project, being developed by
+	different teams. The final product may even be located in
+	different platforms and locations. This is a good example
+	in how component-based technology can be used. Basically, each
+	part constitutes a component. An interface contract for each 
+	component is established and interaction is done through these
+	interfaces. Each part shouldn't have to worry about the other
+	parts, in particular, their location and platform.
+	</P
+><P
+>Another example can be found in desktop environments.
+	Imagine a user writing a document or a web page where he
+	wants to integrate a graphic. Putting graphics functionality
+	in the word processor or web page editor would be overloading
+	them (how about audio, movie, barcharts...?). Doing it outside
+	and importing as an image is also not the best solution. But
+	if there is already a mechanism for handling that functionality
+	why not reuse it? Basically, the idea is to "embed" the
+	graphics mechanism in the word processor or web page editor
+	(something like: "when handling this data use this particular
+	mechanism"). But to have a good interaction between mechanisms
+	we need independence, interface contracts and again components
+	appear as a good solution for this.
+	</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN556"
+>Discussing and complementing the definition</A
+></H2
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="KEYASP"
+>Key aspects and raised questions</A
+></H3
+><P
+>First, let's refer to the aimed key aspects in
+        component-based development.
+        </P
+><P
+></P
+><UL
+><LI
+><P
+>Standardized parts and services (both through the
+	    standardization of components and the environment in which
+	    they operate.)
+	    </P
+></LI
+><LI
+><P
+>Minimal or no contact between entities designing
+  	    components; decoupling of development efforts.
+	    </P
+></LI
+><LI
+><P
+>Access to practical (re)use both internal and external
+	    through standardized interoperability, configurability, and
+	    deployment.
+	    </P
+></LI
+><LI
+><P
+>Independent variability through documentation of 
+	    components 'seams' (the interfaces used and exposed).
+	    </P
+></LI
+><LI
+><P
+>Source code for custom needs; binary components for
+	    standard needs.
+	    </P
+></LI
+><LI
+><P
+>A strict emphasis on component assembly first;
+	    manual coding second.
+	    </P
+></LI
+><LI
+><P
+>A robust mechanism for the delivery of architectures,
+	    frameworks, and services.
+	    </P
+></LI
+></UL
+><P
+>But this implies several questions:</P
+><P
+></P
+><UL
+><LI
+><P
+>How "loose" do we want a component to be? Could
+            it be dependent from other components or context-based?
+            At first glance this doesn't seem desirable since it will 
+            minimize reuse which is one of the main aspects desired.
+            </P
+></LI
+><LI
+><P
+>But then how do we minimize problems occurring from 
+            deployment and reuse? These problems involve dependencies 
+            both from the environment and other components.
+            </P
+></LI
+><LI
+><P
+>How to minimize communication between parts and 
+            dependencies on the developments of the several parts?
+            </P
+></LI
+><LI
+><P
+>How to handle third-party interoperability? In order
+            to avoid problems with versioning it is necessary a "black-box"
+            view of the component but that is not enough. The third-party 
+            still has to have a guarantee on the services provided by the 
+            component.
+            </P
+></LI
+><LI
+><P
+>How to handle heterogeneity between parts (for example,
+            different languages, different platforms,...)?
+            </P
+></LI
+><LI
+><P
+>What happens if the component has persistent state?
+            Having persistent state would make two copies of a component
+            different: is that desirable?
+            </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN590"
+>Looking at the definition</A
+></H3
+><P
+>The key aspects and these questions leads us to some 
+        discussion on the three points presented above.
+        </P
+><P
+>As a component is an unit of independent deployment it needs
+        to be well-separated from the environment and even from other
+        components. In other words, the component needs to encapsulate
+        its constituent features. Also, it has to be totally deployed.
+        </P
+><P
+>The second point relates to the composition with other
+        components by a party exterior to at least one component.
+        To couple with that, the component has to be self-contained and
+        specify exactly what it provides and requires by means of well-defined
+        interfaces and implementation hiding.
+        </P
+><P
+>The reason for the third point has to do with the fact
+        that a component should be indistinguishable from its copies.
+        By complying to this it is then possible that there is, at most, 
+        one copy of each component loaded in each process.
+        </P
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN596"
+>But this is incomplete</A
+></H3
+><P
+>Dion Hinchcliffe and Michael J. Gaffney complemented the three
+       points above with nine other points (see <A
+HREF="components.html#COMPLINKS"
+><I
+>Links and further information</I
+></A
+>).
+       These twelve items constitute what they believe are the 
+       <SPAN
+CLASS="QUOTE"
+>"unequivocal requirements a software entity must meet in
+       order to claim to be, dare we say it, a 'true' component"</SPAN
+>.
+       </P
+><P
+>These nine added items are:</P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>A component must be loosely coupled with other
+	   components via interface definitions and implementation
+	   separation.
+           </P
+></LI
+><LI
+><P
+>A component must explicitly identify both the interfaces
+	    it uses and exposes, and/or the service categories it uses
+	    and exposes.
+	    </P
+></LI
+><LI
+><P
+>A component has an unbreakable contract with all of its 
+	    clients by virtue of the services its interface promises to 
+	    deliver (design by contract).
+	    </P
+></LI
+><LI
+><P
+>A component must be deliverable in binary form (black box).
+  	    </P
+></LI
+><LI
+><P
+>A component must use and expose services through 
+	    standardized middleware services (DCOM, CORBA, JavaBeans, etc.)
+	    </P
+></LI
+><LI
+><P
+>A component must be configurable at design-time/run-time
+  	    through a standardized interface (such as ActiveX and JavaBeans
+	    property sheets or standard configuration files).
+	    </P
+></LI
+><LI
+><P
+>A component must be interoperable with other components
+	    across processes, machines, networks, languages, operating
+	    systems, transaction environments, and tools.
+	    </P
+></LI
+><LI
+><P
+>A component should make use of standardized 
+	    infrastructure services such as security, licensing, 
+	    versioning, life-cycle management, visual assembly,
+	    event notification, configuration, scripting, metadata,
+	    introspection, persistence, relationships, administration,
+	    management, debugging, and installation.
+	    </P
+></LI
+><LI
+><P
+>A component should be able to wire itself into a
+	    collaboration with other components solely via 
+	    design-time/run-time configuration.
+	    </P
+></LI
+></OL
+><P
+>The last two items are desirable but not absolutely
+        necessary as well as they are difficult to satisfy. The
+        other seven plus the three described in the beginning 
+        enable the realization of the key aspects of component-based
+        development presented above.</P
+><P
+>Very roughly, the keywords are: <I
+CLASS="EMPHASIS"
+>interface
+        contracts</I
+>, <I
+CLASS="EMPHASIS"
+>middleware</I
+>, 
+        <I
+CLASS="EMPHASIS"
+>configurability</I
+> and
+        <I
+CLASS="EMPHASIS"
+>independent, "black-box"-view unit</I
+>.
+        </P
+><P
+>But why comply with all these requirements? For example,
+        why use strategies like CORBA when it doesn't seem to be
+        necessary? Because if we want to make use of the benefits
+        that this technology enables, not complying with just one of
+        the 10 points (the other two, as was said are not necessary
+        but are very desirable) will make the component less reusable
+        and adaptable to the situation. In this case, if later on
+        there would be a need to have different platforms, for example,
+        wrappers would have to be written to do the work this technology
+        is responsible for.</P
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN628"
+>Components and Objects</A
+></H3
+><P
+>A final note regarding components Vs objects.</P
+><P
+>Components and objects, at first glance, are very similar
+        concepts. There exists the image of entities, independent units that
+	interact with each other, associated with both and, both are
+	paradigms of development. 
+        But there are, however, some fundamental differences.
+        </P
+><P
+>Here is a table showing the main differences between
+	both concepts:</P
+><DIV
+CLASS="INFORMALTABLE"
+><P
+></P
+><TABLE
+BORDER="1"
+CLASS="CALSTABLE"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+>Components</TH
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+>Objects</TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>all copies are equal</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>it has a unique identity (instantiation)</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>it has no persistent state</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>it can have persistent state</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>it encapsulates its features but not its state</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>it encapsulates its state and behavior</TD
+></TR
+></TABLE
+><P
+></P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN649"
+>Middleware and CORBA</A
+></H2
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/corba.jpg"
+></IMG
+><DIV
+CLASS="CAPTION"
+><P
+>A request passing from client to object implementation
+            (from the OMG documentation)
+            </P
+></DIV
+></P
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN657"
+>Middleware: what is and why it is essential to components</A
+></H3
+><P
+>Middleware is now a very popular term and is basically used 
+        to refer to software "that sits in the middle, connecting diverse
+        (and usually preexisting) programs together". In other words, a
+        separate product that acts as a glue between two applications.
+        </P
+><P
+>The necessity for middleware strategies appeared with
+        distributed computing. Database systems have been one of the
+        most important areas in this field (see <A
+HREF="components.html#COMPLINKS"
+><I
+>Links and further information</I
+></A
+>).
+        The complexity involved in the communication between software
+        parts residing in different machines (for example, a database
+        server, an application server and the clients) made it necessary
+        that some extra software was added to handle this communication.
+        </P
+><P
+>Distributed computing is now very widely used. There is a 
+        need for strategies that simplify the developer's work (for 
+        example, handling the message passing protocol) but provide good
+        flexibility. Using object-oriented principles, Microsoft developed
+        DCOM, Java developed JavaBeans and OMG, the CORBA architecture.
+        </P
+><P
+>But these are not always the best solutions for a 
+        project. There are several strategies and the following
+        list presents the main ones except for CORBA which is
+        described in the following section.
+        </P
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><B
+>Socket programming</B
+></DT
+><DD
+><P
+></P
+><UL
+><LI
+><P
+>the communication between the application
+                  components is done using sockets directly;
+                  </P
+></LI
+><LI
+><P
+>the API is very low level, making the
+                  overhead associated very low, thus, resulting
+                  in more efficient applications;
+                  </P
+></LI
+><LI
+><P
+>it is not well suited to handle complex data
+                  types especially regarding different types of 
+                  machine and/or programming languages and so
+                  is unsuitable for developing complex applications
+                  </P
+></LI
+></UL
+></DD
+><DT
+><B
+>Remote Procedure Call (RPC)</B
+></DT
+><DD
+><P
+></P
+><UL
+><LI
+><P
+>function-oriented interface to
+                  socket-level communications;
+                  </P
+></LI
+><LI
+><P
+>and so is easier to use than raw socket
+                  programming;
+                  </P
+></LI
+><LI
+><P
+>it is powerful enough to be the basis
+                  for many client/server applications;
+                  </P
+></LI
+><LI
+><P
+>a standard RPC protocol exists, although
+                  there are some incompatible implementations;
+                  </P
+></LI
+></UL
+></DD
+><DT
+><B
+>Microsoft Distributed Component Object Model 
+            (DCOM)</B
+></DT
+><DD
+><P
+></P
+><UL
+><LI
+><P
+>capabilities similar to CORBA</P
+></LI
+><LI
+><P
+>there is a good support on Microsoft
+                  Operating Systems but this support is sparse
+                  outside;</P
+></LI
+><LI
+><P
+>thus making it very good for projects
+                  over Microsoft products but not well-suited
+                  for cross-platform;
+                  </P
+></LI
+></UL
+></DD
+><DT
+><B
+>Java Beans and Java Remote Method Invocation 
+            (RMI)</B
+></DT
+><DD
+><P
+></P
+><UL
+><LI
+><P
+>CORBA-like architecture</P
+></LI
+><LI
+><P
+>supports the passing of objects by value
+                  (CORBA, for example, only passes references to
+                  objects);
+                  </P
+></LI
+><LI
+><P
+>but is a Java-only solution and, so, is
+                  not the best solution if different languages
+                  are used;
+                  </P
+></LI
+></UL
+></DD
+></DL
+></DIV
+><P
+>XML is also playing an important role in middleware. It is
+        an easily parsed, human readable, simple and, most important, standard
+        and independent format. These characteristics are very useful to 
+        connect heterogeneous programs together, both for data 
+        representation and communication protocol.
+        </P
+><P
+>Middleware is what handles the communication between
+        components. The complexity and flexibility required by
+        component designing but still the desire that it is simple 
+        to use and implement leads to a middleware solution that: 
+        </P
+><P
+></P
+><UL
+><LI
+><P
+>can handle complex data types and communication
+            </P
+></LI
+><LI
+><P
+>enables connecting different platforms, in 
+            particular, different operating systems, hardware
+            and software
+            </P
+></LI
+><LI
+><P
+>enables the communication between different
+            languages
+            </P
+></LI
+><LI
+><P
+>provides all the above in a standard way
+            </P
+></LI
+><LI
+><P
+>hides from the developer the complexity of
+            communication (for examples, the message passing
+            passing protocol) and of complying with the
+            items above
+            </P
+></LI
+></UL
+><P
+>Probably, the product that fulfills best the items 
+        above is CORBA since DCOM is very bounded to the platform
+        and JavaBeans to the language.
+        </P
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN721"
+>CORBA</A
+></H3
+><P
+>CORBA, or Common Object Request Broker Architecture, is 
+        defined by OMG (Object Management Group). It is a popular 
+        architecture and specification for creating software 
+        components. Its purpose is to handle interoperability between
+        different hardware and software products, in a standard and 
+        transparent way, thus making it possible for two different 
+        applications from different vendors, in different computers, 
+        operating systems, programming languages and networks to 
+        communicate with each other.
+        </P
+><P
+>It's an object-oriented architecture and its building 
+        blocks are:
+        </P
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><B
+>OMG Interface Definition Language, OMG IDL</B
+></DT
+><DD
+><P
+>Basically, is used to specify interfaces 
+              between CORBA objects.
+              </P
+><P
+>Moreover, defines mappings for a variety of different 
+              languages and which purpose is to abstract from the
+              languages being used to implement the components
+              so that they all speak a common language.              
+              </P
+><P
+>It's not an implementation language; its sole 
+              purpose is to define interfaces.
+              </P
+></DD
+><DT
+><B
+>The Object Request Broker or ORB</B
+></DT
+><DD
+><P
+>A software component whose purpose is to
+              facilitate communications between objects by, for
+              example, providing capabilities like:
+              </P
+><P
+></P
+><UL
+><LI
+><P
+>to locate a remote object, given an
+                  object reference
+                  </P
+></LI
+><LI
+><P
+>marshaling of parameters and return
+                  values to and from remote method invocations
+                  </P
+></LI
+></UL
+><P
+>So, basically, ORBs handle requests between
+              applications enabling abstraction of where the
+              program that receives the request and the one
+              sending are.
+              </P
+></DD
+><DT
+><B
+>The standard protocol IIOP, Internet
+            InterORB Protocol</B
+></DT
+><DD
+><P
+>Provides a standard communication between
+              different ORBs above TCP/IP. Other protocols
+              exist, and not only over TCP/IP,  but this one
+              is the most popular.
+              </P
+><P
+>To facilitate the communication between
+              objects, Object References are used (in the
+              IIOP case, these are called <I
+CLASS="EMPHASIS"
+>Interoperable
+              Object References, IOR</I
+>): when a
+              component of an application wants to access a
+              CORBA object, it first obtains an OR for that
+              object. Using the OR, the component can then
+              invoke methods on the object.
+              </P
+></DD
+></DL
+></DIV
+><P
+>CORBA provides, with these building blocks,
+        <I
+CLASS="EMPHASIS"
+>independence of language</I
+> - CORBA 
+        objects and clients can be implemented in
+        any language that exists IDL for it, which is a
+        big set, and need not know which language was
+        used to implement other CORBA objects that they
+        talk to - and <I
+CLASS="EMPHASIS"
+>independence of platform</I
+>
+        - CORBA objects can be used on any platform for which 
+        there is a CORBA ORB implementation.
+        </P
+><P
+>It is said that a component is a 
+        <I
+CLASS="EMPHASIS"
+>server</I
+> if it contains CORBA
+        objects whose services are accessible to other
+        objects.
+        And, naturally, it is said to be a 
+        <I
+CLASS="EMPHASIS"
+>client</I
+> if it accesses services
+        from some other CORBA object.
+        Of course, a component can act both as a client and
+        a server.
+        </P
+><P
+>Related with these terms are the 
+        <I
+CLASS="EMPHASIS"
+>stubs</I
+> and <I
+CLASS="EMPHASIS"
+>skeletons</I
+>:
+        </P
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><B
+>client stub</B
+></DT
+><DD
+><P
+>a small piece of code that allows a client
+              component to access a server component
+              </P
+></DD
+><DT
+><B
+>server skeletons</B
+></DT
+><DD
+><P
+>pieces of code that one "fills in"
+              when implementing a server
+              </P
+></DD
+></DL
+></DIV
+><P
+>Finally, the Object Management Group established the
+        Object Management Architecture (OMA) of which CORBA
+        is a part.
+        OMA consists of:
+        </P
+><P
+></P
+><UL
+><LI
+><P
+>ORB function<A
+NAME="AEN770"
+HREF="#FTN.AEN770"
+>[1]</A
+>
+            </P
+></LI
+><LI
+><P
+>CORBAservices - object services</P
+></LI
+><LI
+><P
+>CORBAfacilities - common facilities</P
+></LI
+><LI
+><P
+>domain interfaces</P
+></LI
+><LI
+><P
+>application objects</P
+></LI
+></UL
+><P
+>It is important to note that these include a set
+        standard services, compliant with CORBA, containing
+        directory and naming services and transaction services.
+        </P
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN781"
+>An example: BONOBO</A
+></H2
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/bonobo.jpg"
+></IMG
+><DIV
+CLASS="CAPTION"
+><P
+>Part of one of the screenshots at GNOME's webpage.
+            It shows miscellaneous embedding (for example, playing
+            GnoMines on the spreadsheet...).</P
+></DIV
+></P
+></DIV
+><BLOCKQUOTE
+CLASS="BLOCKQUOTE"
+><P
+>"BONOBO is the GNOME architecture for creating
+        reusable software components and compound documents."
+        </P
+></BLOCKQUOTE
+><P
+>GNOME implemented BONOBO in order to comply with
+      interoperability between different applications in the
+      desktop (e.g., embed a graphics object in a word processor
+      document).
+      </P
+><P
+>BONOBO is basically a set of CORBA interfaces and 
+      an implementation in GNOME/GTK+ of these interfaces that 
+      are designed to be simple to use and hide CORBA and
+      between-components protocol used. An application uses
+      these interfaces to export its functionality or integrate 
+      other components functionality making it possible to
+      edit a graphic or even play GnoMines in a spreadsheet.
+      </P
+><P
+>BONOBO is targeted both at the developer and the user.
+      </P
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN794"
+>Target: Developer</A
+></H3
+><P
+>The GNOME project is very large and consists
+        of multiple applications. This applications are
+        developed by several people, in particular, hobbyists
+        whose contribution can disappear at any point.
+        </P
+><P
+>Component software helps reduce the complexity
+        of applications by reducing the amount of information
+        a programmer needs to know about the system.
+        </P
+><P
+>The component software also enables the
+        developer to build larger, more complex applications
+        by gluing different components together.
+        </P
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN799"
+>Target: User</A
+></H3
+><P
+>UNIX provides very powerful mechanisms to a user
+        with small programs like <B
+CLASS="COMMAND"
+>sed</B
+>, 
+        <B
+CLASS="COMMAND"
+>awk</B
+>, <B
+CLASS="COMMAND"
+>cat</B
+> and 
+        <B
+CLASS="COMMAND"
+>sort</B
+> and pipes that enables
+        this programs to be chained, where the output from the
+        first is used as the input for the second. This
+        enables the user to do very powerful actions in a
+        simple command line.
+        </P
+><P
+>BONOBO uses this as an image and applies it
+        to desktop environments. Instead of building applications
+        more and more complex and with every possible 
+        functionality, simply reuse what is already built
+        and <SPAN
+CLASS="QUOTE"
+>"give to Caesar what belongs to Caesar"</SPAN
+>.
+        For example, writing a document in a word processor and
+        adding data from a spreadsheet program.
+        What is meant with the above is that, instead of having
+        to leave the word processor, launch the spreadsheet, copy
+        the data and paste it to the text, being able to insert
+        data directly from the word processor. The word processor
+        will include the data from the spreadsheet and launch
+        the program. Furthermore, the user would be able to edit
+        the data included from the spreadsheet directly from the
+        word processor or could have the data refreshed when
+        it was changed in the spreadsheet (imagine, for example,
+        daily reports).        
+        </P
+><P
+>The term for this is 
+        <I
+CLASS="EMPHASIS"
+>Document-Centric world</I
+>.
+        </P
+><P
+>BONOBO is similar to the OLE strategy in Microsoft.</P
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN811"
+>Interesting characteristics of BONOBO</A
+></H3
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><B
+>The interfaces</B
+></DT
+><DD
+><P
+>All BONOBO components must implement the
+              <B
+CLASS="COMMAND"
+>Bonobo::Unknown</B
+> interface. 
+              This interface consists of a function 
+              <TT
+CLASS="FUNCTION"
+>query_interface()</TT
+> and the pair 
+              <TT
+CLASS="FUNCTION"
+>ref()</TT
+>/<TT
+CLASS="FUNCTION"
+>unref()</TT
+>.
+              The first is used to check if an interface is
+              implemented and to obtain the required interface.
+              The pair is described in the next point.
+              It is by these interfaces that the component states
+              if it is embedable (for example, it is embedable if
+              it provides the 
+              <B
+CLASS="COMMAND"
+>Bonobo::Embedable</B
+> interface),
+              if it is storable, if it can be edit in place, etc.
+              </P
+></DD
+><DT
+><B
+>Ref()/unref()</B
+></DT
+><DD
+><P
+>Components keep track on if their services
+              are being used by the <TT
+CLASS="FUNCTION"
+>ref()/unref()</TT
+>
+              functions, the first incrementing the counter when
+              a request is received, the second decrementing
+              when the request has been fulfilled.
+              </P
+></DD
+><DT
+><B
+>Storage and compound documents</B
+></DT
+><DD
+><P
+>Documents containing heterogeneous data
+              can still be stored by using compound documents
+              and requesting that the components responsible for
+              that type of data do the storage (by providing the
+              respective interfaces)
+              </P
+></DD
+><DT
+><B
+>Containers Vs containee/component</B
+></DT
+><DD
+><P
+>There are two types of "components": the ones
+              that provide services (the containee/component) and
+              the ones that use it (the containers). Looking at
+              the example mentioned before, the word processor
+              is a container and the spreadsheet program is the
+              containee/component. A program can act as both parts.
+              </P
+></DD
+><DT
+><B
+>GOAD</B
+></DT
+><DD
+><P
+>It is the most common way for components to
+              be registered and, thus, being found by others.</P
+></DD
+><DT
+><B
+>Requirements</B
+></DT
+><DD
+><P
+>BONOBO addresses the requirements for:</P
+><P
+></P
+><UL
+><LI
+><P
+>creating compound documents</P
+></LI
+><LI
+><P
+>object linking</P
+></LI
+><LI
+><P
+>object embedding</P
+></LI
+><LI
+><P
+>service activation</P
+></LI
+><LI
+><P
+>storage facilities</P
+></LI
+><LI
+><P
+>menu and toolbar negotiation (merging)</P
+></LI
+><LI
+><P
+>printing</P
+></LI
+></UL
+></DD
+></DL
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="COMPLINKS"
+>Links and further information</A
+></H2
+><P
+><A
+HREF="http://www.cetus-links.org/"
+TARGET="_top"
+>Cetus links</A
+> 
+      is a site devoted to providing links and information on 
+      Objects and Components.
+      At the time of this writing, they stated having 18873 links
+      related with these subjects. Among this were the following:
+      </P
+><P
+></P
+><UL
+><LI
+><P
+><A
+HREF="http://www.sdmagazine.com/breakrm/features/s995f2.shtml"
+TARGET="_top"
+>Components and Objects Together</A
+>
+          by Clemens Szperski who also wrote a popular book on
+          components. 
+          </P
+></LI
+><LI
+><P
+><A
+HREF="http://www.objectnews.com/components_where_are_they.htm"
+TARGET="_top"
+>Components: Where Are They?</A
+>
+          by Dion Hinchcliffe and Michael J. Gaffney that presents 
+          a very concrete study on components and from where the 
+          requirements and characteristics presented in this document 
+          where most based.
+          </P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cbdiforum.com/index.php3"
+TARGET="_top"
+>CDBi FORUM</A
+>
+          stands for Component-Based Development and Integration Forum
+          and provides several interesting and useful informations about
+          components.
+          </P
+></LI
+></UL
+><P
+><A
+HREF="http://www.networkmagazine.com/static/tutorial/interoperability/9909tut.htm"
+TARGET="_top"
+>Lesson 134: Middleware</A
+> by 
+      Jonathan Angel provides a good overview of 
+      middleware. It focuses on the evolution of this software starting
+      from the appearance of distributed computing to distributed objects
+      with CORBA, JavaBeans and DCOM. It also makes a short 
+      reference to XML.
+      </P
+><P
+>As for CORBA, there is a good number of documentation on
+      CORBA. A good place to start is the 
+      <A
+HREF="http://www.omg.org"
+TARGET="_top"
+>OMG homepage</A
+>.</P
+></DIV
+></DIV
+><H3
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN770"
+HREF="components.html#AEN770"
+>[1]</A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>CORBA's role is to implement this</P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="plugins.html"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="comparing.html"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Plugins</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>What to choose</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

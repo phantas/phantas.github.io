@@ -1,0 +1,494 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>On components</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.44"><LINK
+REV="MADE"
+HREF="mailto:Paula.Valenca+www@cern.ch"><LINK
+REL="HOME"
+TITLE="Developing with plugins and components"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="On plugins"
+HREF="x59.html"><LINK
+REL="NEXT"
+TITLE="Some remarks"
+HREF="remarks.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><META
+NAME="Author"
+CONTENT="Paula Valenca"></HEAD
+><BODY
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Developing with plugins and components</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="x59.html"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="remarks.html"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AEN127"
+>On components</A
+></H1
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/components.jpg"
+></IMG
+><DIV
+CLASS="CAPTION"
+><P
+>An illustration of the use of components</P
+></DIV
+></P
+></DIV
+><P
+>There isn't much consensus on what constitutes a component. Although
+    this is not complete and may seem to general we can say that a component
+    is a unit of software with the following characteristics:</P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>It is an indivisible unit of independent deployment
+        </I
+>. The component must be independent from the environment
+        and other components and, so, has to encapsulate it's features. It also
+        can't be partially deployed since it constitutes an whole.
+        </P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>It is a unit of third-party composition</I
+>.
+        A party exterior to at least one component must be able to compose
+        them together. The component has to be self-contained, interface 
+        hiding and provide a well defined interface
+        </P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Has no persistent state</I
+>. This way, any
+        copy of a component won't differ from the original so that, at most,
+        one copy of the component is present.
+        </P
+></LI
+></OL
+><P
+>A typical use is in big, complex and heterogeneous projects 
+    divided in different parts, each with its particular function and 
+    interacting with other parts of the project, being developed by
+    different teams and where each part doesn't want to know how the 
+    other parts are implemented or where they are located. Basically, 
+    each part constitutes a component. An interface contract for each 
+    component is established and interaction is done through these
+    interfaces.
+    </P
+><P
+>Another example can be found in desktop environments.
+    Imagine a user writing a document or a web page where he
+    wants to integrate a graphic. Putting graphics functionality
+    in the word processor or web page editor would be overloading
+    them (how about audio, movie, barcharts...?). Doing it outside
+    and importing as an image is also not the best solution. But
+    if there is already a mechanism for handling that functionality
+    why not reuse it? Basically, the idea is to "embed" the
+    graphics mechanism in the word processor or web page editor
+    (something like: "when handling this data use this particular
+    mechanism"). But to have a good interaction between mechanisms
+    we need independence, interface contracts and again components
+    appear as a good solution for this.</P
+><P
+>The key aspects in component-based development are
+    <A
+NAME="COMP-LITERATURE"
+HREF="#FTN.COMP-LITERATURE"
+>[1]</A
+>
+:</P
+><P
+></P
+><UL
+><LI
+><P
+>Standardised parts and services (both through the
+	standardisation of components and the environment in which
+	they operate.)
+	</P
+></LI
+><LI
+><P
+>Minimal or no contact between entities designing
+  	components; decoupling of development efforts.
+	</P
+></LI
+><LI
+><P
+>Access to practical (re)use both internal and external
+	through standardised interoperability, configurability, and
+	deployment.
+	</P
+></LI
+><LI
+><P
+>Independent variability through documentation of 
+	components 'seams' (the interfaces used and exposed).
+	</P
+></LI
+><LI
+><P
+>Source code for custom needs; binary components for
+	standard needs.
+	</P
+></LI
+><LI
+><P
+>A strict emphasis on component assembly first;
+	manual coding second.
+	</P
+></LI
+><LI
+><P
+>A robust mechanism for the delivery of architectures,
+	frameworks, and services.
+	</P
+></LI
+></UL
+><P
+>But to conform with this characteristics it is necessary
+    to complement the definition above with a list of requirements
+    that must be met<A
+HREF="#FTN.COMP-LITERATURE"
+>[1]</A
+><A
+NAME="AEN170"
+HREF="#FTN.AEN170"
+>[2]</A
+>:</P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>A component must be loosely coupled with other
+	components via interface definitions and implementation
+	separation.
+        </P
+></LI
+><LI
+><P
+>A component must explicitly identify both the interfaces
+	it uses and exposes, and/or the service categories it uses
+	and exposes.
+	</P
+></LI
+><LI
+><P
+>A component has an unbreakable contract with all of its 
+	clients by virtue of the services its interface promises to 
+	deliver (design by contract).
+	</P
+></LI
+><LI
+><P
+>A component must be deliverable in binary form (black box).
+  	</P
+></LI
+><LI
+><P
+>A component must use and expose services through 
+	standardised middleware services (DCOM, CORBA, JavaBeans, etc.)
+	</P
+></LI
+><LI
+><P
+>A component must be configurable at design-time/run-time
+  	through a standardised interface (such as ActiveX and JavaBeans
+	property sheets or standard configuration files).
+	</P
+></LI
+><LI
+><P
+>A component must be interoperable with other components
+	across processes, machines, networks, languages, operating
+	systems, transaction environments, and tools.
+	</P
+></LI
+><LI
+><P
+>A component should make use of standardised 
+	infrastructure services such as security, licensing, 
+	versioning, life-cycle management, visual assembly,
+	event notification, configuration, scripting, metadata,
+	introspection, persistence, relationships, administration,
+	management, debugging, and installation.
+	</P
+></LI
+><LI
+><P
+>A component should be able to wire itself into a
+	collaboration with other components solely via 
+	design-time/run-time configuration.
+	</P
+></LI
+></OL
+><P
+>One of the keywords in component-based technology is
+    <I
+CLASS="EMPHASIS"
+>middleware</I
+>. Middleware is now a very popular
+    term and is basically used to refer to software "that sits in the
+    middle, connecting diverse (and usually preexisting) programs together".
+    In other words, a separate product that acts as a glue between 
+    two applications.
+    </P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/corba.jpg"
+></IMG
+><DIV
+CLASS="CAPTION"
+><P
+>A request passing from client to object implementation
+            (from the OMG documentation)
+            </P
+></DIV
+></P
+></DIV
+><P
+>CORBA is one of the most popular architecture and specification
+    for creating software components. It provides the functionality required
+    as middleware. CORBA  stands for Common Object Request Broker Architecture
+    and is defined by OMG. Its building blocks are:
+    </P
+><P
+></P
+><UL
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>OMG Interface Definition Language, OMG IDL</I
+>
+        which defines mappings for a variety of different languages and which
+        purpose is to abstract from the language being used to implement the
+        component so that they all have a common language.
+        </P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>The Object Request Broker or ORB</I
+> which
+        handles requests from programs to components and between components
+        enabling abstraction of where the program that receives the request
+        and the one sending are.
+        </P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>The standard protocol IIOP</I
+> which provides
+        a standard communication between different ORBs above TCP/IP.
+        </P
+></LI
+></UL
+><P
+>CORBA provides, with these building blocks, independence of
+    language and independence of platform.</P
+><P
+>As an example, GNOME implemented BONOBO in order to comply
+    with interoperability between different applications in the desktop
+    (e.g, embed a graphics object in a word processor document). BONOBO
+    is basically a set of CORBA interfaces and an implementation in
+    GNOME/GTK+ of these interfaces that are designed to be simple to use
+    and hide CORBA and between-components protocol used. An application
+    uses these interfaces to export its functionality or integrate other
+    components functionality making it possible to edit a graphic or even
+    play GnoMines in a spreadsheet.
+    </P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/bonobo.jpg"
+></IMG
+></P
+></DIV
+></DIV
+><H3
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.COMP-LITERATURE"
+HREF="x127.html#COMP-LITERATURE"
+>[1]</A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>Based on [<SPAN
+CLASS="CITATION"
+>Components: Where are They?</SPAN
+>]
+        and [<SPAN
+CLASS="CITATION"
+>Components and Objects Together</SPAN
+>]. Please
+        refer to the documentation mentioned at <A
+HREF="remarks.html"
+><I
+>Some remarks</I
+></A
+>.
+        </P
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN170"
+HREF="x127.html#AEN170"
+>[2]</A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>The last two items are desirable but not essential. They
+        are also very hard to comply.
+        </P
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="x59.html"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="remarks.html"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>On plugins</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Some remarks</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

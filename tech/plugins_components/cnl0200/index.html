@@ -1,0 +1,296 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Developing with plugins and components</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.44"><LINK
+REV="MADE"
+HREF="mailto:Paula.Valenca+www@cern.ch"><LINK
+REL="NEXT"
+TITLE="On plugins"
+HREF="x59.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><META
+NAME="Author"
+CONTENT="Paula Valenca"></HEAD
+><BODY
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="TITLE"
+><A
+NAME="AEN2"
+>Developing with plugins and components</A
+></H1
+><H3
+CLASS="AUTHOR"
+>Paula Valença</H3
+><DIV
+CLASS="AFFILIATION"
+><DIV
+CLASS="ADDRESS"
+><P
+CLASS="ADDRESS"
+>   Paula.Valenca@cern.ch<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</P
+></DIV
+></DIV
+><P
+CLASS="COPYRIGHT"
+>Copyright &copy; 2000 by <SPAN
+CLASS="HOLDER"
+>Paula Valenca</SPAN
+></P
+><DIV
+><DIV
+CLASS="ABSTRACT"
+><A
+NAME="ABSTRACT"
+></A
+><P
+></P
+><P
+>Nowadays, several projects have become so complex and large
+      that are impossible to develop and maintain as a single
+      monolithic block. On the other hand, the ability for an application
+      to acquire as much functionality as possible, reusing software and
+      without accumulating functionality not needed at that
+      moment and, thus, not wasting resources, is also becoming an
+      important problem.</P
+><P
+>These and other problems caused some new strategies to
+      develop, in particular, the use of <I
+CLASS="EMPHASIS"
+>plugins</I
+>
+      and <I
+CLASS="EMPHASIS"
+>components</I
+> which, using some old
+      principles of modularity and implementation facilities like
+      <I
+CLASS="EMPHASIS"
+>shared libraries</I
+> and <I
+CLASS="EMPHASIS"
+>middleware
+      </I
+>(e.g., CORBA), permit to overcome these problems in a
+      clean and standard way.</P
+><P
+>This article presents an overview over this technology.
+      </P
+><P
+></P
+></DIV
+></DIV
+><HR></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AEN23"
+>Why plugins and components?</A
+></H1
+><P
+>One of the biggest problems developers have to handle nowadays
+    is on how to cope with the enormous size and complexity of an 
+    increasing number of current projects. 
+    It is common knowledge that from a certain point it is 
+    impossible to have the application as a monolithic block. It is 
+    necessary to divide the project in different parts, as independent 
+    as possible, so that architecting the different parts together is as 
+    easy and consistent as possible. This tends to be difficult since
+    different teams are only familiar with their parts and the 
+    inter-communication is usually low. Also, it is very common nowadays
+    to have a project spread in different platforms and locations.
+    </P
+><P
+>On the other hand, it is also usually said that, if a certain 
+    functionality is needed and it is already available somewhere, one 
+    should reuse this implementation and not "reinvent the wheel". 
+    This should account also for using/developing products aside 
+    especially for a certain task instead of integrating that 
+    functionality in the main application. Besides the reusability,
+    this also brings more flexibility and a simpler and clearer main 
+    application.
+    For instance, consider an application which captures, evaluates and
+    stores data where in the evaluation stage, some graphics need to be 
+    generated. There are a big number of applications that draw graphics 
+    and are probably preferred than to add "from scratch" graphics 
+    functionality to the application. But the main problem is whether 
+    the graphic program is easily integrated which, most of the times, 
+    is not the case.
+    </P
+><P
+>Continuing on the subject of adding/changing functionality and
+    considering the same example, imagine that the data it handles is
+    very heterogeneous and, thus, the way this data is evaluated, for
+    example, is different according to the type of data. When the set
+    of the types handled is small and doesn't change and the way they
+    are handled is also static, the final product is a bit complex
+    but handleable. But when this is not the case several problems appear:
+    </P
+><P
+></P
+><UL
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Flexibility and consistency</I
+>. How to
+        add/change/remove functionality in a flexible manner without 
+        compromising the consistency of the application and, preferably, 
+        not having to rebuild all the application?</P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Efficiency</I
+>. How to do this in a way
+        that doesn't compromise to much the efficiency, e.g., there
+        isn't a waste of resources since most will only be used for a
+        certain period or not even used at all in a session?</P
+></LI
+></UL
+><P
+>Recently, two paradigms have evolved that are especially aimed 
+    at this type of problems: <I
+CLASS="EMPHASIS"
+>Plugins</I
+> and 
+    <I
+CLASS="EMPHASIS"
+>Components</I
+>.
+    These enable us to fulfil the following compilation of objectives
+    in a clever and transparent way.
+    It is easily seen why this two paradigms have become so popular.
+    </P
+><P
+></P
+><DL
+><DT
+><I
+CLASS="FIRSTTERM"
+>Modularity</I
+></DT
+><DD
+><P
+>Modularity is one of the keywords. How to divide
+          an utility in different parts that obey the rules of modularity
+          (independence, encapsulation) and interact with each other in
+          a desired way. A special case would be to divide an utility in
+          its main part (management) and its several branches, thus,
+          separating functionality.
+	  </P
+></DD
+><DT
+><I
+CLASS="FIRSTTERM"
+>Dynamic functionality independent of the 
+          main part</I
+></DT
+><DD
+><P
+>In other words, to be able to add/change/remove
+          functionality of an utility without touching the main part. As
+          an add-on, to be able to do that on runtime. This implies that
+          the application shouldn't be rebuild and, further more, compiled,
+          each time these changes take place.
+          </P
+></DD
+><DT
+><I
+CLASS="FIRSTTERM"
+>Independent development of parts</I
+></DT
+><DD
+><P
+>The development of each part of a project should 
+            be independent from the other ones. This obliges the 
+            communication between parts to be transparent and standard.
+            Also, each part should be able to cope with the others
+            being in different platforms and locations. Basically,
+            each part shouldn't have to worry about how others are
+            implemented and located.
+            </P
+></DD
+><DT
+><I
+CLASS="FIRSTTERM"
+>Communication between applications
+          </I
+></DT
+><DD
+><P
+>This means being able to embed an application A that
+            provides a desired functionality inside an application B
+            thus reusing code and providing a lighter and simpler
+            application B.
+            </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="x59.html"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>On plugins</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

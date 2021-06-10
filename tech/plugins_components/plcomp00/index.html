@@ -1,0 +1,287 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Developing with plugins and components</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.44"><LINK
+REV="MADE"
+HREF="mailto:Paula.Valenca+www@cern.ch"><LINK
+REL="NEXT"
+TITLE="Introduction"
+HREF="intro.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><META
+NAME="Author"
+CONTENT="Paula Valenca"></HEAD
+><BODY
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="TITLE"
+><A
+NAME="AEN2"
+>Developing with plugins and components</A
+></H1
+><H3
+CLASS="AUTHOR"
+>Paula Valença</H3
+><DIV
+CLASS="AFFILIATION"
+><DIV
+CLASS="ADDRESS"
+><P
+CLASS="ADDRESS"
+>   Paula.Valenca@cern.ch<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</P
+></DIV
+></DIV
+><P
+CLASS="COPYRIGHT"
+>Copyright &copy; 2000 by <SPAN
+CLASS="HOLDER"
+>Paula Valenca</SPAN
+></P
+><DIV
+><DIV
+CLASS="ABSTRACT"
+><A
+NAME="ABSTRACT"
+></A
+><P
+></P
+><P
+>Nowadays, several projects have become so complex and large
+      that are now impossible to develop and maintain as a single
+      monolithic block. On the other hand, the ability for an application
+      to acquire as much functionality as possible, reusing software and
+      without accumulating functionality not needed at that
+      moment and, thus, not wasting resources, is also becoming an
+      important problem.</P
+><P
+>These and other problems caused some new strategies to
+      develop, in particular, the use of <I
+CLASS="EMPHASIS"
+>plugins</I
+>
+      and <I
+CLASS="EMPHASIS"
+>components</I
+> which, using some old
+      principles of modularity and implementation facilities like
+      <I
+CLASS="EMPHASIS"
+>shared libraries</I
+> and <I
+CLASS="EMPHASIS"
+>middleware
+      </I
+>(e.g., CORBA), permit to overcome these problems in a
+      clean and standard way.</P
+><P
+>This tutorial aims to provide a clear and precise
+      description of these paradigms. Special attention is also
+      given on how these paradigms can be developed and implementation
+      issues like shared libraries and CORBA. To illustrate, several 
+      examples are given. A short discussion on important common aspects
+      and when these strategies should or not be used concludes the
+      tutorial.</P
+><P
+></P
+></DIV
+></DIV
+><HR></DIV
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>This document was written in SGML using Docbook v.3.1 and
+    translated to HTML and LaTeX using Norman Walsh stylesheets v.1.44
+    </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AEN25"
+>Overview</A
+></H1
+><P
+>This tutorial describes two recent technologies that have 
+    become very popular: <I
+CLASS="EMPHASIS"
+>Plugins</I
+> and 
+    <I
+CLASS="EMPHASIS"
+>Components</I
+>. It's purpose is to provide a
+    precise definition of this two paradigms and a formalisation
+    of their characteristics. Still, implementation issues are not 
+    forgot and technologies like <I
+CLASS="EMPHASIS"
+>shared libraries</I
+>
+    and <I
+CLASS="EMPHASIS"
+>middleware</I
+> by means of 
+    <I
+CLASS="EMPHASIS"
+>CORBA</I
+> are also focused as well as some very
+    short and simple examples.
+    </P
+><P
+>The tutorial starts (<A
+HREF="intro.html"
+><I
+>Introduction</I
+></A
+>) by presenting 
+    several common problems that caused these paradigms to evolve. 
+    From these problems a general list of what is desired to be 
+    fulfilled is created.</P
+><P
+>Before describing plugins and components and see how these
+    two can handle the problems referred, <A
+HREF="shared.html"
+><I
+>Shared libraries</I
+></A
+>
+    provides a description on shared libraries: what they are, benefits
+    and disadvantages, as well as presenting some very useful tools.
+    Shared libraries are very important in developing, mainly, plugins
+    but can also be a better choice for some problem than requiring
+    all the functionality necessary to plugins whose disadvantages
+    can overwrite the advantages.
+    </P
+><P
+>Next comes the first paradigm focused: plugins 
+    (<A
+HREF="plugins.html"
+><I
+>Plugins</I
+></A
+>). A short and precise definition is 
+    first presented. The pros and cons of this paradigm are examined 
+    and by joining these to the experience gathered from plugin-based 
+    technologies available, a list of characteristics that should be 
+    fulfilled is presented.
+    The chapter ends by comparing several publicly available 
+    implementations (Netscape, Gnumeric and GIMP) and pointing how 
+    some characteristics are or not fulfilled and, finally, a small 
+    example.
+    </P
+><P
+>The second paradigm, components, follows in 
+    <A
+HREF="components.html"
+><I
+>Components</I
+></A
+>. The structure is very similar: a short
+    and formal definition followed by a discussion on the concept,
+    advantages, disadvantages and raised questions. From this, the
+    definition is complemented with a list of characteristics that 
+    should be fulfilled. A short comparison on components and objects
+    is summarised in a table since there are some similarities in the
+    two concepts. Next, implementation issues are again approached by
+    discussing middleware which constitutes one of the keywords in
+    component-based technology and making a short description of CORBA.
+    The chapter ends presenting an example: BONOBO, a component-based 
+    technology used in GNOME.
+    </P
+><P
+>Finally, in <A
+HREF="comparing.html"
+><I
+>What to choose</I
+></A
+> it is possible to
+    compare the technologies focused in this tutorial that, although
+    quite different, have some similarities. Some important, general
+    aspects are mentioned as well as some cautions that should be kept 
+    in mind.
+    </P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="intro.html"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Introduction</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

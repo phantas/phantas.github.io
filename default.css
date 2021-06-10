@@ -1,0 +1,119 @@
+/*
+Default CSS for paulavalenca.org
+
+Created September 2006 by Paula Valenca
+*/
+
+
+body {
+	padding: 0;
+	margin: 0;
+	font: 12px, Verdana, Arial, Helvetica, sans-serif;
+	color: #ffffff;
+	background: #666666;
+}
+.container {
+	margin-right: auto;
+	margin-left: auto;
+	margin-bottom: auto;
+	margin-top: 30px;
+	width: 800px;
+}
+.content {
+	margin-right: auto;
+	margin-left: 0px;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	float: left;
+	width: 600px;
+	padding: 20px;
+	color: #666666;
+	background: #ffffff;
+	border: 5px solid silver;
+}
+.footer {
+	float: left;
+	font-size: 10px;
+	height: 30px;
+	width: 600px;
+}
+ul.menu {
+	margin-right: 0px;
+	margin-left: 0px;
+	margin-bottom: -20px;
+	margin-top: -20px;
+	width: 150px;
+	float: left;
+	list-style-type: none;	/* retirar bullets */
+	padding: 0px;
+}    
+ul.menu li {
+	margin-right: 0px;
+	margin-left: 10px;
+	margin-bottom: 20px;
+	margin-top: 20px;
+	padding: 10px;
+	background: #666666;
+	color: #ffffff;
+	border: 5px solid silver;
+}
+ul.menu li.active {
+	background: #ffffff;
+	color: #666666;
+	border: 5px solid silver;
+}
+ul.menu li a {
+	text-decoration: none;
+	color: #ffffff;
+}
+ul.menu li.active a {
+	color: #666666;
+}
+ul.menu a:hover {
+	font-weight: bold;
+}
+img {
+	margin: 0px 100px 50px 100px;
+}
+hr {
+	margin-top: 50px;
+	margin-bottom: 50px;
+	clear: both;
+}
+h1 {
+	text-align: center;
+}
+
+#twitter_div {
+	margin: 20px;
+	padding: 0px;
+	width: 300px;
+	font-size: 10px;
+	float: left;
+}
+h2.twitter-title {
+	margin: 0px;
+	padding: 2px;
+	font-size: 12px;
+	font-weight: normal;
+	color: #ffffff;
+	background: #999999;
+	border-top: solid 1px #cccccc;
+	border-bottom: solid 1px #666666;
+}
+
+#twitter_div ul {
+	list-style-type: none;
+	padding: 0px;
+	border-bottom: solid 20px #999999;
+}
+#twitter_div li {
+	padding: 5px;
+	border-bottom: solid 1px #666666;
+}
+#lastfm_div {
+	margin: 20px;
+	padding: 0px;
+	width: 200px;
+	float: right;
+}

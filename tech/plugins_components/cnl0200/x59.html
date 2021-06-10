@@ -1,0 +1,404 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>On plugins</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.44"><LINK
+REV="MADE"
+HREF="mailto:Paula.Valenca+www@cern.ch"><LINK
+REL="HOME"
+TITLE="Developing with plugins and components"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Developing with plugins and components"
+HREF="index.html"><LINK
+REL="NEXT"
+TITLE="On components"
+HREF="x127.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><META
+NAME="Author"
+CONTENT="Paula Valenca"></HEAD
+><BODY
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Developing with plugins and components</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="x127.html"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AEN59"
+>On plugins</A
+></H1
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/plugins.jpg"
+></IMG
+><DIV
+CLASS="CAPTION"
+><P
+>An illustration of the plugin-concept:  an independent 
+        application where units of software, intended
+        to complement the functionality, can be "plugged" to.
+        </P
+></DIV
+></P
+></DIV
+><P
+>A plugin is a unit of software intended to extend the
+    functionality of an independent application at run-time (see
+    <A
+HREF="glossary.html"
+><I
+>Glossary</I
+></A
+>). 
+    It provides several advantages, making this technology very popular 
+    among several programs that process heterogeneous data and would, 
+    otherwise, be less flexible and heavier (one of the most famous 
+    examples being Netscape that uses plugins to handle and/or view 
+    special data like audio or movies):
+    </P
+><P
+></P
+><UL
+><LI
+><P
+>The functionality is added/changed/removed on runtime
+        so that the application doesn't have to be rebuild and, 
+        furthermore, not even recompiled.
+        </P
+></LI
+><LI
+><P
+>The application doesn't know the plugin beforehand ( it is
+        the plugin's responsibility to present itself) providing
+        wider flexibility to what functionality can be added.
+        </P
+></LI
+><LI
+><P
+>It leads to a complete, clean separation from the main 
+        application and the various branches with their separate 
+        functionality. Thus we get a lighter main application focused
+        on the essentials.
+        </P
+></LI
+><LI
+><P
+>It is usually very easy for an user to add a plugin to 
+        the application.
+        </P
+></LI
+></UL
+><P
+>Plugins are usually implemented as demand-loaded shared 
+    libraries. These type of libraries are only loaded on runtime
+    as opposed to static whose code is included in the application
+    on the compilation stage. They can be loaded in two different
+    ways:</P
+><P
+></P
+><UL
+><LI
+><P
+>automatically at the start of the process and, thus, only
+          unloaded at the end: the library must be linked at compilation
+          stage;
+          </P
+></LI
+><LI
+><P
+>by request of the program itself (using, for example,
+          <TT
+CLASS="FUNCTION"
+>dlopen()</TT
+>): the code can be loaded and
+          unloaded in the middle of the process or not even loaded at
+          all; furthermore, the library is not linked at compilation
+          stage;
+          </P
+></LI
+></UL
+><P
+>When the library is loaded, the system checks if it is
+    already in memory, so that, at most, one copy of the library is
+    present in the memory.</P
+><P
+>Plugins are typically implemented as the second type since
+    their characteristics are especially adequate for the "plug"
+    concept. But in order to comply with the desired functionality
+    of a plugin, the following list of requirements must be met:
+    </P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>The application must be independent from the plugins.</P
+></LI
+><LI
+><P
+>There should be a "black-box" view in both directions.</P
+></LI
+><LI
+><P
+>The application must not "know" the plugin beforehand;
+	the plugin must introduce itself to the application.
+	</P
+></LI
+><LI
+><P
+>The application must be loosely coupled with the plugins;
+	a common interface to be provided by the plugins (whether total
+	or partial) must be defined precisely (Contract).
+	</P
+></LI
+><LI
+><P
+>The application should define what services are
+	provided to the plugin via interface definitions.
+	</P
+></LI
+><LI
+><P
+>A plugin must be self-contained.</P
+></LI
+><LI
+><P
+>A plugin should create a plugin instance to handle each
+	task.
+	</P
+></LI
+></OL
+><P
+>The interface common to all plugins is one of the critical
+    points and, although this interface varies between technologies,
+    the plugin should provide:</P
+><P
+></P
+><UL
+><LI
+><P
+>information on the type of task it can handle</P
+></LI
+><LI
+><P
+>a function to be called to handle that type of task
+	(<TT
+CLASS="FUNCTION"
+>do_work()</TT
+>)
+	</P
+></LI
+><LI
+><P
+>an instance-type strategy including a structure to
+	store all the data of a particular task and a way to know
+	if there aren't any tasks (instances) still working so that
+	the plugin can be unloaded
+        </P
+></LI
+><LI
+><P
+>a function to initialize the plugin</P
+></LI
+></UL
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN112"
+>Some popular examples</A
+></H2
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/netscape.jpg"
+></IMG
+></P
+></DIV
+><P
+>Netscape (and other Web browsers) uses plugins to view/handle 
+      special data present in some Web pages, for example, audio and video.
+      </P
+><P
+>The API is very well defined in the documentation: it contains
+      a list of functions provided by Netscape, a list of functions the plugin
+      must and can define and structures to be used. Since the communication
+      is all done by this total interface, both parts act as complete 
+      "black-boxes". Another interesting characteristic is the life cycle of
+      a plugin: <I
+CLASS="EMPHASIS"
+>Initialize</I
+>(when the plugin is first 
+      called), <I
+CLASS="EMPHASIS"
+>New Instance</I
+>(each time it is invoked), 
+      <I
+CLASS="EMPHASIS"
+>Destroy Instance</I
+>(when a task is completed and that
+      instance is no longer needed) and <I
+CLASS="EMPHASIS"
+>Shutdown</I
+> (when all
+      instances are destroyed).
+      </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;PluginInitResult
+   &nbsp;init_plugin (CommandContext *context, PluginData *pd)
+   &nbsp;{
+   &nbsp;	FunctionCategory *cat;
+  5&nbsp;
+   &nbsp;/* The next line checks if the Gnumeric version being used corresponds
+   &nbsp;   to the required by the plugin */
+   &nbsp;	if (plugin_version_mismatch  (context, pd, GNUMERIC_VERSION))
+   &nbsp;		return PLUGIN_QUIET_ERROR;
+ 10&nbsp;
+   &nbsp;	cat = function_get_category (_("Fact PlugIn"));
+   &nbsp;	function_add_args (cat, "MyFactorial", "f", "number", NULL, func_fact);
+   &nbsp;
+   &nbsp;	pd-&#62;can_unload     = can_unload;
+ 15&nbsp;	pd-&#62;cleanup_plugin = cleanup_plugin;
+   &nbsp;	pd-&#62;title = g_strdup ("My PlugIn Plugin");
+   &nbsp;
+   &nbsp;	return PLUGIN_OK;
+   &nbsp;}</PRE
+></TD
+></TR
+></TABLE
+><P
+>The program listing above is part of a Gnumeric plugin source 
+      code. Gnumeric uses plugins both to handle different formats 
+      (e.g., Excel) and add functions not defined (statistical, numerical,...).
+      The API the plugin must define is very concise and partial: the 
+      plugin registers the new functions it defines (in lines 11-12, the 
+      plugin is registering a function, in this example, the factorial 
+      function). The <TT
+CLASS="FUNCTION"
+>init_plugin()</TT
+> function is called
+      at start-up. Besides registering the functions it also provides
+      information on the Plugin (in this case, the title) and functionality
+      to unload the plugin (e.g., check if there aren't any instances left).
+      Although Gnumeric plugins are not the best example, since the 
+      requirements above are not completely met (Gnumeric is completely
+      transparent to the plugin) it provides a very simple example with most
+      of the core ideas.
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="index.html"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="x127.html"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Developing with plugins and components</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>On components</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

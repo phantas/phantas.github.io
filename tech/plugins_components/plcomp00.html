@@ -1,0 +1,4113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Developing with plugins and components</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.44"><LINK
+REV="MADE"
+HREF="mailto:Paula.Valenca+www@cern.ch"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="docbook.css"><META
+NAME="Author"
+CONTENT="Paula Valenca"></HEAD
+><BODY
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="TITLE"
+><A
+NAME="AEN2"
+>Developing with plugins and components</A
+></H1
+><H3
+CLASS="AUTHOR"
+>Paula Valença</H3
+><DIV
+CLASS="AFFILIATION"
+><DIV
+CLASS="ADDRESS"
+><P
+CLASS="ADDRESS"
+>   Paula.Valenca@cern.ch<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</P
+></DIV
+></DIV
+><P
+CLASS="COPYRIGHT"
+>Copyright &copy; 2000 by <SPAN
+CLASS="HOLDER"
+>Paula Valenca</SPAN
+></P
+><DIV
+><DIV
+CLASS="ABSTRACT"
+><A
+NAME="ABSTRACT"
+></A
+><P
+></P
+><P
+>Nowadays, several projects have become so complex and large
+      that are now impossible to develop and maintain as a single
+      monolithic block. On the other hand, the ability for an application
+      to acquire as much functionality as possible, reusing software and
+      without accumulating functionality not needed at that
+      moment and, thus, not wasting resources, is also becoming an
+      important problem.</P
+><P
+>These and other problems caused some new strategies to
+      develop, in particular, the use of <I
+CLASS="EMPHASIS"
+>plugins</I
+>
+      and <I
+CLASS="EMPHASIS"
+>components</I
+> which, using some old
+      principles of modularity and implementation facilities like
+      <I
+CLASS="EMPHASIS"
+>shared libraries</I
+> and <I
+CLASS="EMPHASIS"
+>middleware
+      </I
+>(e.g., CORBA), permit to overcome these problems in a
+      clean and standard way.</P
+><P
+>This tutorial aims to provide a clear and precise
+      description of these paradigms. Special attention is also
+      given on how these paradigms can be developed and implementation
+      issues like shared libraries and CORBA. To illustrate, several 
+      examples are given. A short discussion on important common aspects
+      and when these strategies should or not be used concludes the
+      tutorial.</P
+><P
+></P
+></DIV
+></DIV
+><HR></DIV
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>This document was written in SGML using Docbook v.3.1 and
+    translated to HTML and LaTeX using Norman Walsh stylesheets v.1.44
+    </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H1
+CLASS="SECT1"
+><A
+NAME="AEN25"
+>Overview</A
+></H1
+><P
+>This tutorial describes two recent technologies that have 
+    become very popular: <I
+CLASS="EMPHASIS"
+>Plugins</I
+> and 
+    <I
+CLASS="EMPHASIS"
+>Components</I
+>. It's purpose is to provide a
+    precise definition of this two paradigms and a formalisation
+    of their characteristics. Still, implementation issues are not 
+    forgot and technologies like <I
+CLASS="EMPHASIS"
+>shared libraries</I
+>
+    and <I
+CLASS="EMPHASIS"
+>middleware</I
+> by means of 
+    <I
+CLASS="EMPHASIS"
+>CORBA</I
+> are also focused as well as some very
+    short and simple examples.
+    </P
+><P
+>The tutorial starts (<A
+HREF="#INTRO"
+><I
+>Introduction</I
+></A
+>) by presenting 
+    several common problems that caused these paradigms to evolve. 
+    From these problems a general list of what is desired to be 
+    fulfilled is created.</P
+><P
+>Before describing plugins and components and see how these
+    two can handle the problems referred, <A
+HREF="#SHARED"
+><I
+>Shared libraries</I
+></A
+>
+    provides a description on shared libraries: what they are, benefits
+    and disadvantages, as well as presenting some very useful tools.
+    Shared libraries are very important in developing, mainly, plugins
+    but can also be a better choice for some problem than requiring
+    all the functionality necessary to plugins whose disadvantages
+    can overwrite the advantages.
+    </P
+><P
+>Next comes the first paradigm focused: plugins 
+    (<A
+HREF="#PLUGINS"
+><I
+>Plugins</I
+></A
+>). A short and precise definition is 
+    first presented. The pros and cons of this paradigm are examined 
+    and by joining these to the experience gathered from plugin-based 
+    technologies available, a list of characteristics that should be 
+    fulfilled is presented.
+    The chapter ends by comparing several publicly available 
+    implementations (Netscape, Gnumeric and GIMP) and pointing how 
+    some characteristics are or not fulfilled and, finally, a small 
+    example.
+    </P
+><P
+>The second paradigm, components, follows in 
+    <A
+HREF="#COMPONENTS"
+><I
+>Components</I
+></A
+>. The structure is very similar: a short
+    and formal definition followed by a discussion on the concept,
+    advantages, disadvantages and raised questions. From this, the
+    definition is complemented with a list of characteristics that 
+    should be fulfilled. A short comparison on components and objects
+    is summarised in a table since there are some similarities in the
+    two concepts. Next, implementation issues are again approached by
+    discussing middleware which constitutes one of the keywords in
+    component-based technology and making a short description of CORBA.
+    The chapter ends presenting an example: BONOBO, a component-based 
+    technology used in GNOME.
+    </P
+><P
+>Finally, in <A
+HREF="#COMPARING"
+><I
+>What to choose</I
+></A
+> it is possible to
+    compare the technologies focused in this tutorial that, although
+    quite different, have some similarities. Some important, general
+    aspects are mentioned as well as some cautions that should be kept 
+    in mind.
+    </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H1
+CLASS="SECT1"
+><A
+NAME="INTRO"
+>Introduction</A
+></H1
+><P
+>One of the biggest problems developers have to handle nowadays
+    is on how to cope with the enormous size and complexity of an 
+    increasing number of current projects. These projects involve several
+    people, possibly, in different teams and locations, developing an 
+    heterogeneous software where the different parts have to interact 
+    consistently, thus requiring a perfect agreement between teams. 
+    The problem gets worst when considering that the product will have 
+    to be maintained afterwards or even extended.
+    </P
+><P
+>It is common knowledge that from a certain point it is 
+    impossible to have the application as a monolithic block. It is 
+    necessary to divide the project in different parts, as independent 
+    as possible, so that joining the work of two teams is as easy and 
+    consistent as possible.
+    Dividing the project is also necessary to limit the scope of the
+    problem being handled, enabling easier and clearer development and 
+    maintenance. For example, consider a product that captures, evaluates
+    and stores some type of data. Now, consider that the way the data is 
+    stored is changed or there is a bug somewhere. Having clear 
+    distinctions between the different functionalities clearly makes
+    this task easier and protects the rest of the product.
+    But having a project divided in different parts brings the
+    problem of architecting the parts, i.e., joining the different
+    parts together. Teams are only familiar with their parts and 
+    communication between teams tends to be short. Also, it is very
+    common to have the project spread in different platforms and 
+    locations.
+    </P
+><P
+>On the other hand, it is also usually said that, if a certain 
+    functionality is needed and it is already available somewhere, one 
+    should reuse this implementation and not "reinvent the wheel". 
+    This should account also for using/developing products aside 
+    especially for a certain task instead of integrating that 
+    functionality in the main application.
+    Besides the reusability of code, it also gives more flexibility 
+    (it is easier to add functionality this way than rebuilding the
+    all application) and a simpler and clearer main application 
+    (instead of having a confusing, heterogeneous and heavy one).
+    But this requires some conditions from both parts that should be
+    considered before the development of either one.
+    For instance, consider the last example. Imagine that in the
+    evaluation stage, some graphics need to be generated. There are
+    a big number of applications that draw graphics and are probably
+    preferred than to add "from scratch" graphics functionality to the
+    application. But the main problem is whether the graphic 
+    program is easily integrated which, most of the times, is not the case.
+    </P
+><P
+>Continuing on the subject of adding/changing functionality and
+    considering the same example, imagine that the data it handles is
+    very heterogeneous and, thus, the way this data is evaluated, for
+    example, is different according to the type of data. When the set
+    of the types handled is small and doesn't change and the way they
+    are handled is also static, the final product is a bit complex
+    but handleable. But when this is not the case we come upon several
+    problems:
+    </P
+><P
+></P
+><UL
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Flexibility and consistency</I
+>. How to
+        add/change/remove functionality in a flexible manner without 
+        compromising the consistency of the application and, preferably, 
+        not having to rebuild all the application?</P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Efficiency</I
+>. How to do this in a way
+        that doesn't compromise to much the efficiency, e.g., there
+        isn't a waste of resources since most will only be used for a
+        certain period or not even used at all in a session?</P
+></LI
+></UL
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN56"
+>Objectives</A
+></H2
+><P
+>Recently, two paradigms have evolved that are
+      especially aimed at this type of problems: 
+      <I
+CLASS="EMPHASIS"
+>Plugins</I
+><A
+NAME="PLUG-IN"
+HREF="#FTN.PLUG-IN"
+>[1]</A
+> and <I
+CLASS="EMPHASIS"
+>Components</I
+>.
+      But, in order to understand why the need for this technology arose, 
+      we can compile, from the above problems, a list of objectives we would 
+      like to fulfil. It is easy to see, looking at the nature of the 
+      problems and the following list, why these new paradigms have
+      become so popular.</P
+><P
+></P
+><DL
+><DT
+><I
+CLASS="FIRSTTERM"
+>Modularity</I
+></DT
+><DD
+><P
+>Modularity is one of the keywords. How to divide
+          an utility in different parts that obey the rules of modularity
+          (independence, encapsulation) and interact with each other in
+          a desired way. A special case would be to divide an utility in
+          its main part (management) and its several branches, thus,
+          separating functionality.
+	  </P
+></DD
+><DT
+><I
+CLASS="FIRSTTERM"
+>Dynamic functionality independent of the 
+          main part</I
+></DT
+><DD
+><P
+>In other words, to be able to add/change/remove
+          functionality of an utility without touching the main part. As
+          an add-on, to be able to do that on runtime. This implies that
+          the application shouldn't be rebuild and, further more, compiled,
+          each time these changes take place.
+          </P
+></DD
+><DT
+><I
+CLASS="FIRSTTERM"
+>Independent development of parts</I
+></DT
+><DD
+><P
+>The development of each part of a project should 
+            be independent from the other ones. This obliges the 
+            communication between parts to be transparent and standard.
+            Also, each part should be able to cope with the others
+            being in different platforms and locations. Basically,
+            each part shouldn't have to worry about how others are
+            implemented and located.
+            </P
+></DD
+><DT
+><I
+CLASS="FIRSTTERM"
+>Communication between applications
+          </I
+></DT
+><DD
+><P
+>This means being able to embed an application A that
+            provides a desired functionality inside an application B
+            thus reusing code and providing a lighter and simpler
+            application B.
+            </P
+></DD
+></DL
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>These are, of course, very different objectives which 
+      rarely are assembled together. This is not intended to find a
+      unique solution that covers all of them.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>Using plugins and components enables us to fulfil this 
+      objectives in a clever and transparent way (when used correctly).
+      How this is done is the subject of the next chapters. But first
+      it is necessary to have a look at shared libraries.</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H1
+CLASS="SECT1"
+><A
+NAME="SHARED"
+>Shared libraries</A
+></H1
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="BASIC"
+>Basic concepts</A
+></H2
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><A
+NAME="SHLIBDEF"
+><B
+>Shared library</B
+></A
+></DT
+><DD
+><P
+>a block of code, loaded on request, providing 
+	    data types and procedures
+            </P
+></DD
+></DL
+></DIV
+><P
+>Basically, a <I
+CLASS="EMPHASIS"
+>library</I
+> is a set 
+      of functions and/or structures to be used by applications. For example,
+      if a programmer wishes to use more complex mathematical functions in C 
+      like <TT
+CLASS="FUNCTION"
+>sin</TT
+> he would have to use the library 
+      <B
+CLASS="COMMAND"
+>libm</B
+> where this and other functions are defined.
+      To do so, he can link the library in the compilation stage, using the 
+      <B
+CLASS="COMMAND"
+>-l</B
+> option with the name of the library (without the 
+      lib prefix and the extension: in this case, <B
+CLASS="COMMAND"
+>-lm</B
+>).
+      </P
+><P
+>A <I
+CLASS="EMPHASIS"
+>shared</I
+> library opposes to a
+      <I
+CLASS="EMPHASIS"
+>static</I
+> one in the sense that the library is
+      only loaded at runtime and not in the compilation stage. So, while
+      in static libraries the program carries the library code, when linked
+      to a shared one the library code is not present and is only loaded
+      into memory when needed.
+      </P
+><P
+>One of the named advantages of shared libraries, and also 
+      another characteristic that differs them from static ones,
+      is the fact that the system has, at most, one copy of the library's
+      code per library. When loading, the system first checks if there
+      is already a copy of the library on memory. The code is only
+      copied if there is none, while as in static the code is included
+      in every compiled program to which the library is linked.
+      </P
+><P
+>So, if the program doesn't carry the library's code, when
+      is it loaded? There are two alternatives:
+      </P
+><P
+></P
+><UL
+><LI
+><P
+>automatically at the start of the process and, thus, only
+          unloaded at the end: the library must be linked at compilation
+          stage;
+          </P
+></LI
+><LI
+><P
+>by request of the program itself (using, for example,
+          <TT
+CLASS="FUNCTION"
+>dlopen()</TT
+>): the code can be loaded and
+          unloaded in the middle of the process or not even loaded at
+          all; furthermore, the library is not linked at compilation
+          stage;
+          </P
+></LI
+></UL
+><P
+></P
+><P
+>A small example at the end of this section will illustrate
+      these concepts.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="PROSCONS"
+>Advantages and disadvantages</A
+></H2
+><P
+>But why use a shared library instead of a static one? And
+      why use demand loading instead of automatic loading or the other
+      way around? Shared libraries bring a number of advantages...
+      </P
+><P
+></P
+><UL
+><LI
+><P
+>libraries are only loaded at run time (thus, the 
+          possibility to change the library without having to 
+          recompile the end application);
+          </P
+></LI
+><LI
+><P
+>lighter applications and saving of space (since
+          the application doesn't carry the library's code);
+          </P
+></LI
+></UL
+><P
+>In particular, <I
+CLASS="EMPHASIS"
+>demand loading</I
+> of
+      a shared library can be very useful</P
+><P
+></P
+><UL
+><LI
+><P
+>as stated before it is the application itself which
+          requests the loading: the code can be loaded and unloaded
+          at any given stage or not loaded at all; this is particularly
+          useful when the program may use resources from several 
+          libraries but not necessarily at that moment, thus, avoiding
+          that dozens of libraries that are not being used would be
+          wasting memory;
+          </P
+></LI
+><LI
+><P
+>since the library is not linked at compilation stage
+          the application doesn't have to know it beforehand: for 
+          example, all the libraries can be put in a certain 
+          directory where the application will fetch them; this
+          enables that resources can be added or changed without 
+          touching the application itself;
+          </P
+></LI
+></UL
+><P
+>But they have a cost. Also, some problems may arise and 
+      should be taken in account.
+      </P
+><P
+></P
+><UL
+><LI
+><P
+>First, errors only show at runtime. This makes
+          the debugging more difficult but also imposes some care on
+          moving libraries and changing them;
+          </P
+></LI
+><LI
+><P
+>Creating a shared library is more complex and
+          requires a few number of flags and details. However,
+          this can be easily overcome (see <A
+HREF="#LIBTOOL"
+><I
+>Libtool</I
+></A
+>);
+          </P
+></LI
+><LI
+><P
+>The dynamic loading obliges the code to be
+          <I
+CLASS="EMPHASIS"
+>Platform Independent Code</I
+>(PIC).
+          This makes the library heavier so, although applications
+          are lighter, space is only actually saved if there is
+          more than one application linked or there is demand loading;
+          </P
+></LI
+><LI
+><P
+>The resources that demand loading enables (see above)
+          also bring dangerous situations:</P
+><P
+></P
+><UL
+><LI
+><P
+>What happens if the program doesn't find the
+              library expected? The error can occur at anytime of
+              the process life and not at the beginning as in automatic
+              loading;</P
+></LI
+><LI
+><P
+>How does the program know which interface the
+              library provides? If it is defined beforehand, how to
+              ally versioning and heterogeneity of libraries with this
+              prior knowledge without having to touch the application?
+              </P
+></LI
+></UL
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="DEVELOP"
+>Developing a shared library</A
+></H2
+><P
+>Developing a shared library, <I
+CLASS="EMPHASIS"
+>as is</I
+>,
+      is generally more difficult than developing a static one. The
+      complexity increases in a great amount when trying to make it
+      platform independent and easily built (a good user interface).
+      There are, however, some very powerful utilities that not only
+      simplify this procedure but are also greatly recommended since
+      they produce a standard, compliant and robust final product.
+      Their use is quite straightforward and apply to static ones
+      as well.
+      </P
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AUTO"
+>Autoconf and Automake</A
+></H3
+><P
+>These two utilities combined are especially adequate for
+        projects intended to be easily developed, used and installed 
+        in different platforms, helping to provide:
+        </P
+><P
+></P
+><UL
+><LI
+><P
+>platform independence and/or ability to check for
+	    the features needed by the package;
+            </P
+></LI
+><LI
+><P
+>a custom and straightforward user interface when
+	    installing the package;
+            </P
+></LI
+><LI
+><P
+>an easy maintenance of Makefile (thus, helping
+            compilation)</P
+></LI
+></UL
+><P
+>To configure the software package, a <TT
+CLASS="FILENAME"
+>configure
+        </TT
+> script is generated from a file called <TT
+CLASS="FILENAME"
+>        configure.in</TT
+> created by the developer. This file
+        should contain invocations to Autoconf macros that test the
+        system features needed by the package. <B
+CLASS="COMMAND"
+>Autoscan</B
+>
+        can be used to help write this file.
+        </P
+><P
+>Automake assumes that Autoconf is being used and is used
+        to produce <TT
+CLASS="FILENAME"
+>Makefile.in</TT
+> files from
+        <TT
+CLASS="FILENAME"
+>Makefile.am</TT
+> files created by the
+        developer. When the <TT
+CLASS="FILENAME"
+>configure</TT
+> script
+        is run these files will originate <TT
+CLASS="FILENAME"
+>Makefile</TT
+>'s.
+        These <TT
+CLASS="FILENAME"
+>Makefile.am</TT
+> files consist mainly
+        of a series of <B
+CLASS="COMMAND"
+>make</B
+> macro definitions.
+        </P
+><P
+>The final user will only have to type</P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;$ ./configure
+   &nbsp;$ make
+   &nbsp;$ make install</PRE
+></TD
+></TR
+></TABLE
+><P
+>Autoconf and Automake manuals in the
+        <A
+HREF="http://www.gnu.org/doc/doc.html"
+TARGET="_top"
+>GNU documentation
+        </A
+> provide a very good explanation on how to use these
+        tools ( see <A
+HREF="#SHAREDLINKS"
+><I
+>Links and further information</I
+></A
+>) 
+        </P
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="LIBTOOL"
+>Libtool</A
+></H3
+><P
+>Libtool is a tool for developing libraries that 
+	provides the complete functionality of a host type in a
+	generic interface but hiding the confusing and complex
+	details. It can be used together with Autoconf and 
+	Automake.</P
+><P
+>Some points about libtool:</P
+><P
+></P
+><UL
+><LI
+><P
+>Libtool is based on the paradigm that <SPAN
+CLASS="QUOTE"
+>"	    libraries are programs with multiple entry points,
+	    and more formally defined interfaces."</SPAN
+>; in
+	    fact, the rules to create a library look much like
+	    a compilation of a program;
+	    </P
+></LI
+><LI
+><P
+>By default, libtool tries to produce both a static
+	    and shared library; if the system doesn't permit shared
+	    libraries, it produces a static version;
+	    </P
+></LI
+><LI
+><P
+>When creating the library, wrappers are used (for
+	    extra meta-data, since the meta-data stored varies with
+	    the platforms) as well as temporary directories for storing
+	    the libraries.
+	    </P
+></LI
+><LI
+><P
+>Libtool provides several facilities:
+	    </P
+><P
+></P
+><UL
+><LI
+><P
+>Creating object files (including PIC)</P
+></LI
+><LI
+><P
+>Linking libraries</P
+></LI
+><LI
+><P
+>Linking executables</P
+></LI
+><LI
+><P
+>Debugging executables</P
+></LI
+><LI
+><P
+>Installing libraries</P
+></LI
+><LI
+><P
+>Installing executables</P
+></LI
+></UL
+></LI
+></UL
+><P
+>In <A
+HREF="#EXAMPLE"
+><I
+>A small example</I
+></A
+>, it's illustrated the
+	use of libtool to create a library.
+	</P
+><P
+><A
+HREF="http://www.gnu.org/doc/doc.html"
+TARGET="_top"
+>GNU documentation
+        </A
+> has also a very good, step by step, manual of libtool 
+	(see <A
+HREF="#SHAREDLINKS"
+><I
+>Links and further information</I
+></A
+>)
+	</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="EXAMPLE"
+>A small example</A
+></H2
+><P
+>To illustrate, here is the development of a very small library,
+      <TT
+CLASS="FILENAME"
+>libgarfield.so</TT
+>, from the files
+      <A
+HREF="examples/eating.c"
+TARGET="_top"
+><TT
+CLASS="FILENAME"
+>eating.c</TT
+></A
+> and 
+      <A
+HREF="examples/sleeping.c"
+TARGET="_top"
+><TT
+CLASS="FILENAME"
+>sleeping.c</TT
+></A
+>
+      with the header file <A
+HREF="examples/garfield.h"
+TARGET="_top"
+><TT
+CLASS="FILENAME"
+>      garfield.h</TT
+></A
+>. An executable called 
+      <TT
+CLASS="FILENAME"
+>garfield</TT
+> is created by linking 
+      <A
+HREF="examples/main.c"
+TARGET="_top"
+><TT
+CLASS="FILENAME"
+>main.c</TT
+></A
+> to 
+      <TT
+CLASS="FILENAME"
+>libgarfield.la</TT
+> (which is a wrapper to 
+      <TT
+CLASS="FILENAME"
+>libgarfield.so</TT
+>).
+      </P
+><P
+>Autoconf and automake are not used here, only libtool.
+      It is presented the steps for the most common actions; see the
+      libtool manual for the explanation of these steps and other
+      possible actions that can be performed (see 
+      <A
+HREF="#SHAREDLINKS"
+><I
+>Links and further information</I
+></A
+>).</P
+><P
+>Creating object files. Note that besides the normal object
+      files it is also created <TT
+CLASS="FILENAME"
+>.lo</TT
+> files which are
+      PIC object files needed when creating the shared library.</P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;$ gcc -g -O -c main.c 
+   &nbsp;$ libtool gcc -g -O -c eating.c 
+   &nbsp;mkdir .libs
+   &nbsp;gcc -g -O -c eating.c  -fPIC -DPIC -o .libs/eating.lo
+  5&nbsp;gcc -g -O -c eating.c -o eating.o &#62;/dev/null 2&#62;&#38;1
+   &nbsp;mv -f .libs/eating.lo eating.lo
+   &nbsp;$ libtool gcc -g -O -c sleeping.c 
+   &nbsp;rm -f .libs/sleeping.lo
+   &nbsp;gcc -g -O -c sleeping.c  -fPIC -DPIC -o .libs/sleeping.lo
+ 10&nbsp;gcc -g -O -c sleeping.c -o sleeping.o &#62;/dev/null 2&#62;&#38;1
+   &nbsp;mv -f .libs/sleeping.lo sleeping.lo</PRE
+></TD
+></TR
+></TABLE
+><P
+>Linking libraries. The libraries are put in the 
+      <TT
+CLASS="FILENAME"
+>.libs/</TT
+> directory and <TT
+CLASS="FILENAME"
+>libgarfield.la
+      </TT
+> is created in place which, as was said, is a wrapper
+      for the shared library.</P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;$ libtool gcc -g -O -o libgarfield.la eating.lo sleeping.lo \
+   &nbsp;	 -rpath /usr/local/lib
+   &nbsp;rm -fr .libs/libgarfield.la .libs/libgarfield.* .libs/libgarfield.*
+   &nbsp;gcc -shared  eating.lo sleeping.lo  -lc  -Wl,-soname -Wl,libgarfield.so.0 -o .libs/libgarfield.so.0.0.0
+  5&nbsp;(cd .libs &#38;&#38; rm -f libgarfield.so.0 &#38;&#38; ln -s libgarfield.so.0.0.0 libgarfield.so.0)
+   &nbsp;(cd .libs &#38;&#38; rm -f libgarfield.so &#38;&#38; ln -s libgarfield.so.0.0.0 libgarfield.so)
+   &nbsp;ar cru .libs/libgarfield.a  eating.o sleeping.o 
+   &nbsp;ranlib .libs/libgarfield.a
+   &nbsp;creating libgarfield.la
+ 10&nbsp;(cd .libs &#38;&#38; rm -f libgarfield.la &#38;&#38; ln -s ../libgarfield.la libgarfield.la)</PRE
+></TD
+></TR
+></TABLE
+><P
+>Linking the executable. The executable is put inside
+      <TT
+CLASS="FILENAME"
+>.libs/</TT
+> and a wrapper script is created in place.
+      </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;$ libtool gcc -g -O -o garfield main.o libgarfield.la 
+   &nbsp;gcc -g -O -o .libs/garfield main.o .libs/libgarfield.so -Wl,--rpath -Wl,/usr/local/lib
+   &nbsp;creating garfield</PRE
+></TD
+></TR
+></TABLE
+><P
+>Installing libraries. <TT
+CLASS="FILENAME"
+>libgarfield.la</TT
+>
+      is also installed with the static and shared libraries. All the
+      necessary operations are usually done (like, for example, calling
+      <B
+CLASS="COMMAND"
+>ldconfig</B
+>) but running 
+      <B
+CLASS="COMMAND"
+>libtool -n --finish <TT
+CLASS="FILENAME"
+>libdir</TT
+></B
+>
+      will give further hints on what to do (in this example, the 
+      installation command already gives this information).</P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;$ libtool install -c libgarfield.la /usr/local/lib/libgarfield.la
+   &nbsp;install -c .libs/libgarfield.so.0.0.0 /usr/local/lib/libgarfield.so.0.0.0
+   &nbsp;(cd /usr/local/lib &#38;&#38; rm -f libgarfield.so.0 &#38;&#38; ln -s libgarfield.so.0.0.0 libgarfield.so.0)
+   &nbsp;(cd /usr/local/lib &#38;&#38; rm -f libgarfield.so &#38;&#38; ln -s libgarfield.so.0.0.0 libgarfield.so)
+  5&nbsp;install -c .libs/libgarfield.lai /usr/local/lib/libgarfield.la
+   &nbsp;install -c .libs/libgarfield.a /usr/local/lib/libgarfield.a
+   &nbsp;ranlib /usr/local/lib/libgarfield.a
+   &nbsp;chmod 644 /usr/local/lib/libgarfield.a
+   &nbsp;PATH="$PATH:/sbin" ldconfig -n /usr/local/lib
+ 10&nbsp;----------------------------------------------------------------------
+   &nbsp;Libraries have been installed in:
+   &nbsp;   /usr/local/lib
+   &nbsp;
+   &nbsp;If you ever happen to want to link against installed libraries
+ 15&nbsp;in a given directory, LIBDIR, you must either use libtool, and
+   &nbsp;specify the full pathname of the library, or use `-LLIBDIR'
+   &nbsp;flag during linking and do at least one of the following:
+   &nbsp;   - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+   &nbsp;     during execution
+ 20&nbsp;   - add LIBDIR to the `LD_RUN_PATH' environment variable
+   &nbsp;     during linking
+   &nbsp;   - use the `-Wl,--rpath -Wl,LIBDIR' linker flag
+   &nbsp;   - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+   &nbsp;
+ 25&nbsp;See any operating system documentation about shared libraries for
+   &nbsp;more information, such as the ld(1) and ld.so(8) manual pages.
+   &nbsp;----------------------------------------------------------------------</PRE
+></TD
+></TR
+></TABLE
+><P
+>Other actions like debugging are also easily done and
+      take advantage of the wrapper scripts.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="SHAREDLINKS"
+>Links and further information</A
+></H2
+><P
+>Autoconf and it's manual can be found at
+      <A
+HREF="http://www.gnu.org/software/autoconf/autoconf.html"
+TARGET="_top"
+>      http://www.gnu.org/software/autoconf/autoconf.html</A
+>.</P
+><P
+>Automake and it's manual can be found at
+      <A
+HREF="http://www.gnu.org/software/automake/automake.html"
+TARGET="_top"
+>      http://www.gnu.org/software/automake/automake.html</A
+>.</P
+><P
+>Libtool's homepage is located at
+      <A
+HREF="http://www.gnu.org/software/libtool/libtool.html"
+TARGET="_top"
+>      http://www.gnu.org/software/libtool/libtool.html</A
+>.</P
+><P
+>The <B
+CLASS="COMMAND"
+>man</B
+> pages of <TT
+CLASS="FUNCTION"
+>dlopen
+      </TT
+>, <B
+CLASS="COMMAND"
+>ld</B
+>, <B
+CLASS="COMMAND"
+>ldconfig</B
+>
+      also provide useful information.</P
+><P
+>General description and implementation information on
+      shared libraries can be found in 
+      <A
+HREF="http://users.actcom.co.il/~choo/lupg/tutorials/libraries/unix-c-libraries.html"
+TARGET="_top"
+>Building and Using Static and Shared "C" Libraries</A
+> 
+      and <A
+HREF="http://www.unix.digital.com/faqs/publications/base_doc/DOCUMENTATION/HTML/AA-PS30D-TET1_html/peg5.html"
+TARGET="_top"
+>Shared Libraries (Section 4)</A
+>.
+      </P
+><P
+>In the GLib Reference Manual, there is a section describing
+      the <B
+CLASS="COMMAND"
+>gmodule</B
+> library, 
+      <A
+HREF="http://developer.gnome.org/doc/API/glib/glib-dynamic-loading-of-modules.html"
+TARGET="_top"
+>Dynamic Loading of Modules</A
+>.
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H1
+CLASS="SECT1"
+><A
+NAME="PLUGINS"
+>Plugins</A
+></H1
+><P
+>There is sometimes some confusion between plugins and
+      shared libraries and what can or cannot be called to be a "plugin".
+      This section aims to clarify this concept by presenting
+      a short and precise (hopefully) definition of a plugin as well
+      as the characteristics that a "true" plugin should fulfill.
+      Examples are also given.
+      </P
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="CONCEPT"
+>Concept and examples</A
+></H2
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><A
+NAME="PLUGINDEF"
+><B
+>Plugin</B
+></A
+></DT
+><DD
+><P
+>A unit of software whose purpose is to extend the
+            functionality of an independent application at run-time.
+            The application has no prior knowledge of the plugin;
+            plugin must act as a "black-box" and present itself
+            by means of a standard interface.
+            </P
+></DD
+></DL
+></DIV
+><P
+>The following image tries to illustrate this concept:
+      an independent application where units of software, intended
+      to complement the functionality, can be "plugged" to.
+      </P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/plugins.jpg"
+></IMG
+><DIV
+CLASS="CAPTION"
+><P
+>An illustration of the use of plugins</P
+></DIV
+></P
+></DIV
+><P
+>Using plugins is becoming very popular, especially in
+      programs that process heterogeneous data and would, otherwise
+      be less flexible and heavier. Examples are:</P
+><P
+></P
+><UL
+><LI
+><P
+>The use of the Mime-type methodology in 
+          <SPAN
+CLASS="APPLICATION"
+>Netscape</SPAN
+> and other web browsers:
+          this enables that special data like audio or video can
+          be present on a web page and viewed accordingly;
+          </P
+></LI
+><LI
+><P
+>Manipulation of images and scripting in 
+          <SPAN
+CLASS="APPLICATION"
+>GIMP</SPAN
+> (GNOME);
+          </P
+></LI
+><LI
+><P
+>Translation from other formats (e.g.: Excel) and 
+          extension of the functionality in <SPAN
+CLASS="APPLICATION"
+>Gnumeric
+          </SPAN
+> (GIMP), e.g., adding a statistic function not
+          included;
+          </P
+></LI
+><LI
+><P
+><SPAN
+CLASS="APPLICATION"
+>Acrobat</SPAN
+>, <SPAN
+CLASS="APPLICATION"
+>          Photoshop</SPAN
+>, <SPAN
+CLASS="APPLICATION"
+>AutoCad</SPAN
+>...
+          </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN295"
+>Pros and cons</A
+></H2
+><P
+>Plugins are a good way of adding functionality to an
+      independent application: they can be loaded and unloaded
+      during runtime and there is no need to recompile the main
+      application when adding a new plugin. This way we can have
+      a main application lighter and focused on the "essentials"
+      which also brings easier development: instead of an heavy,
+      complex, mixed application we have a main application with
+      the fundamental parts and a variety of plugins which extend
+      the functionality.
+      </P
+><P
+>Plugins are usually implemented as demand-loaded
+      shared libraries since these libraries can be loaded on 
+      runtime (as opposed to static) which is necessary for
+      the "plug" concept characteristic of plugins. Thus, they
+      inherit their characteristics.
+      </P
+><DIV
+CLASS="IMPORTANT"
+><P
+></P
+><TABLE
+CLASS="IMPORTANT"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/important.gif"
+HSPACE="5"
+ALT="Important"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>Note that plugins <I
+CLASS="EMPHASIS"
+>are not</I
+>
+        shared libraries. A plugin is a paradigm based on the idea
+        of "plugging" functionality into an application, demand-loaded
+        shared library is a way to implement this paradigm.
+        </P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>But the demand loading raises some questions:</P
+><P
+></P
+><UL
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Should the application know beforehand
+          the plugin?</I
+> "Knowing the plugin" translates
+          to knowing the name of the library as well as it's 
+          interface and what it does. If it does, then what to do if
+          </P
+><P
+></P
+><UL
+><LI
+><P
+>there is a change in the name or version of the
+              plugin?
+              </P
+></LI
+><LI
+><P
+>there is a change in the functionality
+              (extension or alteration of the interface)?
+              </P
+></LI
+><LI
+><P
+>there is a wish to add, remove or substitute
+              plugins?
+              </P
+></LI
+></UL
+><P
+>On the other hand, if the application doesn't have
+          this information
+          </P
+><P
+></P
+><UL
+><LI
+><P
+>how should it acquire this information?
+              </P
+></LI
+><LI
+><P
+>the knowledge on what to expect from the
+              plugins is practically none
+              </P
+></LI
+><LI
+><P
+>and so it is dangerous for the application
+              to depend on a plugin  
+              </P
+></LI
+></UL
+></LI
+><LI
+><P
+>Nevertheless, it has to be defined an interface
+          that a plugin must implement and must be common to all
+          ( in order to use the plugin, the application has to call, at
+          least, one function; the reason why this should be common to
+          all is related with the last topic and, in particular, comes
+          clear if we consider we want to be able to add new plugins
+          without modifying the application). But the question now is:
+          <I
+CLASS="EMPHASIS"
+>how to define an interface that is not to restrict
+          nor to loose?</I
+>
+          </P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>How much of the application could the plugin
+          see and vice-versa?</I
+> The view of the plugin by the 
+          application falls, in part, on the item above; in particular,
+          if the application has no prior knowledge of the plugin, since
+          some information must be given, using the plugin will be
+          more difficult if this information is complex and big.
+          </P
+><P
+>On the other hand, the plugin has also to have some
+          knowledge on the application. Since the plugin is developed
+          with a particular application in mind the only problem that
+          arises in carrying this knowledge is if there are alterations
+          on the application.</P
+></LI
+></UL
+><P
+>In <A
+HREF="#COMPARING"
+><I
+>What to choose</I
+></A
+> further discussion is done
+       mainly comparing the different strategies presented here. 
+       In the next section, baring these problems in mind, it's presented
+       a list of requirements that are believed to be essential in a
+       plugin-based technology.
+       </P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN331"
+>On developing plugins</A
+></H2
+><P
+>We can specify the following list of requirements as a list
+       that should be met in order to have a "true" plugin system. This
+       list was determined essentially from the various plugin-based
+       technologies and personal experience and, of course, some may not
+       agree with it.
+       </P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>The application must be independent from the plugins.</P
+></LI
+><LI
+><P
+>There should be a "black-box" view in both directions.</P
+></LI
+><LI
+><P
+>The application must not "know" the plugin beforehand;
+	   the plugin must introduce itself to the application.
+	   </P
+></LI
+><LI
+><P
+>The application must be loosely coupled with the plugins;
+	   a common interface to be provided by the plugins (whether total
+	   or partial) must be defined precisely.
+	   </P
+></LI
+><LI
+><P
+>The application should define what services are
+	   provided to the plugin via interface definitions.
+	   </P
+></LI
+><LI
+><P
+>A plugin must be self-contained.</P
+></LI
+><LI
+><P
+>A plugin should create a plugin instance to handle each
+	   task.
+	   </P
+></LI
+></OL
+><P
+>The first point has to do with the fact that the application
+       must run by itself, in other words, it must couple with not having
+       a plugin adequate for a particular task ( even if it means, for
+       example, discarding the task).</P
+><P
+>Most of the points before have to do with what was discussed
+       before. The "black-box" view and the well defined interfaces in
+       both direction enable both parts to be implementation independent
+       of the other. So, if there is a change in the version of one of
+       the parts, the risk of affecting the other part is lesser (less need,
+       if not none at all, to recompile the other part). Also this accounts
+       for a clear and standard communication between parts.
+       </P
+><P
+>As was noted, so that there is more flexibility in "plugging"
+       the application shouldn't known the plugins in advance. This also
+       accounts for the independence between both parts (as an example,
+       imagine adding a new plugin or changing by another functionally
+       similar).
+       </P
+><P
+>But then how does the application acquire the needed
+       information? First, by expecting that the plugin obeys a certain
+       defined interface common to all the plugins of that application.
+       This interface must provide a function that returns the description
+       of the plugin, in particular, what type of task it handles. The
+       other important aspect that the application needs to know is what
+       function to call so that this particular task is done: this can
+       be achieved by either passing this information at the same time
+       that the information above is passed, or, by requiring this
+       function on the interface common to all (something of the type
+       <TT
+CLASS="FUNCTION"
+>do_work()</TT
+>).
+       </P
+><P
+>So, although this interface varies between technologies
+       (as can be seen in the examples below), the plugin should provide:
+       </P
+><P
+></P
+><UL
+><LI
+><P
+>information on the type of task it can handle</P
+></LI
+><LI
+><P
+>a function to be called to handle that type of task
+	   (<TT
+CLASS="FUNCTION"
+>do_work()</TT
+>)
+	   </P
+></LI
+><LI
+><P
+>an instance-type strategy including a structure to
+	   store all the data of a particular task and a way to know
+	   if there aren't any tasks (instances) still working so that
+	   the plugin can be unloaded
+	   </P
+></LI
+><LI
+><P
+>a function to initialize the plugin</P
+></LI
+></UL
+><P
+>Whether the application only accepts the common interface
+       or whether the plugin can provide an extension to this interface
+       (a total interface opposed to a partial one)
+       it's the developers decision but must also be defined
+       beforehand so that the application can couple with that.
+       If it's a partial one, the extra should also be declared when
+       the plugin presents itself.
+       </P
+><P
+>The last point comes mainly from the fact that a plugin is
+       loaded at runtime and the separation between it and the application;
+       if the plugin has dependencies, it can be very difficult to check
+       these dependencies in runtime. This point is desirable but not
+       always achievable.
+       </P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>Not quite a requirement but more of a principle: a plugin
+	 is application-dependent in the sense that it was developed with
+	 an application in mind. Even if it can be used outside it still
+	 has to obey an interface imposed by the application. 
+	 </P
+></TD
+></TR
+></TABLE
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN369"
+>Looking at some plugin-based technologies</A
+></H2
+><P
+>We will know look at some of the examples referred at the
+       beginning of the section and see how the plugin paradigm is
+       implemented in them: <SPAN
+CLASS="APPLICATION"
+>Netscape</SPAN
+>,
+       <SPAN
+CLASS="APPLICATION"
+>Gnumeric</SPAN
+> and <SPAN
+CLASS="APPLICATION"
+>GIMP</SPAN
+>.
+       </P
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN375"
+>Netscape (and Mozilla)</A
+></H3
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/netscape.jpg"
+></IMG
+></P
+></DIV
+><P
+>Netscape has a SDK for development of plugins which contains
+	 a template for a plugin: a user only has to "fill-in" the
+	 functions defined in the template. Furthermore, the API is
+	 very well defined in tables on the documentation: which functions
+	 Netscape provides, which functions the plugin must and can define
+	 and which structures are defined.
+	 </P
+><P
+>Both Netscape and the plugins act as complete "black-boxes":
+	 the communication is all done by the API defined in the
+	 documentation. These are the main aspects of this API:
+	 </P
+><P
+></P
+><UL
+><LI
+><P
+>A plugin life-cycle consist of four stages :
+	     </P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Initialize</I
+>. When a plugin is
+		 first called, Netscape loads the plugin into memory, 
+		 and calls a function(<TT
+CLASS="FUNCTION"
+>NPP_Initialize</TT
+>)
+		 defined by the plugin which the plugin uses to initialize
+		 itself;
+		 </P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>New Instance</I
+>. Every time a 
+		 plugin is invoked, Netscape calls <TT
+CLASS="FUNCTION"
+>NPP_New</TT
+>
+		 (again defined by the plugin) which creates
+		 a new instance of a plugin. This includes the first time
+		 the plugin is called also (this means that if the 
+		 same web page or two different windows call the same 
+		 plugin, two instances are created);
+		 </P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Destroy Instance</I
+>. When a
+		 certain instance of a plugin is no longer used,
+		 Netscape calls <TT
+CLASS="FUNCTION"
+>NPP_Destroy</TT
+> 
+		 (plugin defined) to "destroy" that particular instance;
+		 </P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Shutdown</I
+>. When all the
+		 instances of a plugin are destroyed, Netscape calls
+		 the plugin function <TT
+CLASS="FUNCTION"
+>NPP_Shutdown</TT
+>
+		 and then removes the plugin from the browser memory.
+		 </P
+></LI
+></OL
+></LI
+><LI
+><P
+>In practice, there is a structure type called
+	     <TT
+CLASS="FUNCTION"
+>NPP</TT
+> which contains two pointers: 
+	     one to the plugin's private data (<TT
+CLASS="FUNCTION"
+>pdata</TT
+>)
+	     which Netscape doesn't touch and one to the browser private
+	     data (<TT
+CLASS="FUNCTION"
+>ndata</TT
+>) which, in turn, the plugin
+	     doesn't touch. A variable of type <TT
+CLASS="FUNCTION"
+>NPP</TT
+>
+	     is passed to the functions which handle data. The 
+	     plugin defines a structure type 
+	     <TT
+CLASS="FUNCTION"
+>PluginInstance</TT
+> and allocates the
+	     <TT
+CLASS="FUNCTION"
+>pdata</TT
+> to that type.
+	     </P
+></LI
+><LI
+><P
+>Information about the plugin is given by the plugin defined
+	     functions <TT
+CLASS="FUNCTION"
+>NPP_GetMIMEDescription</TT
+> and
+	     <TT
+CLASS="FUNCTION"
+>NPP_GetValue</TT
+>.
+	     </P
+></LI
+><LI
+><P
+>Work is done by communication through streams
+	     (usually, this only means Netscape passing the data to be
+	     analyzed to the plugin) and display through the window or not. 
+	     </P
+></LI
+><LI
+><P
+>To summarize, the API the plugin must define is already
+	     declared in the template; it includes the 4 functions that
+	     compose the plugin life-cycle mentioned, the 2 functions for
+	     giving information about the plugin plus some functions for
+	     stream and window handling. There is also a function related
+	     to Java.
+	     </P
+></LI
+></UL
+><P
+><I
+CLASS="EMPHASIS"
+>How Netscape loads plugins</I
+>:
+	 Netscape looks for plugins in directories indicated
+	 by the <B
+CLASS="COMMAND"
+>NPX_PLUGIN_PATH</B
+> environment variable
+	 when it starts up. Usually, this directories are 
+	 <TT
+CLASS="FILENAME"
+>/usr/lib/netscape/plugins/</TT
+>
+	 and <TT
+CLASS="FILENAME"
+>$HOME/.netscape/plugins/</TT
+>;
+	 </P
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN424"
+>Gnumeric</A
+></H3
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/gnumeric.jpg"
+></IMG
+></P
+></DIV
+><P
+>The API defined by the plugin is very concise : it consists of
+	 a single function, <TT
+CLASS="FUNCTION"
+>init_plugin</TT
+>, which returns
+	 a structure of type PluginData containing
+	 </P
+><P
+></P
+><UL
+><LI
+><P
+>the plugin filename,</P
+></LI
+><LI
+><P
+>an handle to the plugin (see below),</P
+></LI
+><LI
+><P
+>the <TT
+CLASS="FUNCTION"
+>init_plugin</TT
+> function itself,</P
+></LI
+><LI
+><P
+>a <TT
+CLASS="FUNCTION"
+>can_unload</TT
+> function which
+	      states if the plugin can be removed, in particular,
+	      checking if there aren't any instances still working
+	     </P
+></LI
+><LI
+><P
+>a <TT
+CLASS="FUNCTION"
+>cleanup_plugin</TT
+> function
+	      called when the plugin is unloaded,
+	     </P
+></LI
+><LI
+><P
+>a title for the plugin,</P
+></LI
+><LI
+><P
+>and a pointer to the plugin's private data to be filled 
+	     by it.
+	     </P
+></LI
+></UL
+><P
+>In this structure, the plugin only defines the
+	 <TT
+CLASS="FUNCTION"
+>can_unload</TT
+> and 
+	 <TT
+CLASS="FUNCTION"
+>cleanup_function</TT
+>, the title and,
+	 when needed, the <TT
+CLASS="FUNCTION"
+>private_data</TT
+>;
+	 all others are filled by Gnumeric when loading the plugin.
+	 The API the plugin must define is partial: the plugin must 
+	 "register" the functions it defines in the 
+	 <TT
+CLASS="FUNCTION"
+>init_plugin()</TT
+> function.
+	 </P
+><P
+>When Gnumeric starts, it looks for plugins in the directories
+	 <TT
+CLASS="FILENAME"
+>$HOME/.gnumeric/plugins/$VERSION/</TT
+> and 
+	 <TT
+CLASS="FILENAME"
+>/usr/lib/gnumeric/plugins/$VERSION/</TT
+>;
+	 Then, for each plugin, creates a structure of type PluginData,
+	 stores the name, opens the module (plugin) and stores the 
+	 handle resulting, calls <TT
+CLASS="FUNCTION"
+>init_plugin</TT
+> and 
+	 appends the PluginData data to the <TT
+CLASS="FUNCTION"
+>plugin_list</TT
+>.
+	 Gnumeric also provides what is called a "plugin manager" which 
+	 can be used in runtime to load and unload plugins.
+	 </P
+><P
+>An important point is that there is not a specific and 
+	 restricted API from Gnumeric to the plugin; the developer 
+	 simply uses the functions and types defined by Gnumeric and 
+	 Gnome in the headers files.
+	 So, Gnumeric doesn't act so much like a "black-box" and doesn't offer
+	 a well defined API which doesn't comply with the requirements
+	 mentioned above. 
+	 </P
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN461"
+>GIMP</A
+></H3
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/gimp.jpg"
+></IMG
+></P
+></DIV
+><P
+>Gimp defines two types of plugins : the general ones
+	 and the extensions. The only difference is a functional
+	 one : the first usually receive an image and do some
+	 transformation to the image; the second extend functionality
+	 by, for example, permitting to write scripts in Perl, 
+	 Python, etc. that generate an image instead of doing it
+	 directly, by hand, in Gimp.
+	 </P
+><P
+>The API the plugin must define consists only of a variable
+	 called PLUG_IN_INFO of type GPlugInInfo containing pointers
+	 to four functions:
+	 </P
+><P
+></P
+><UL
+><LI
+><P
+>the first two, of type <TT
+CLASS="FUNCTION"
+>init_proc</TT
+> 
+	     and <TT
+CLASS="FUNCTION"
+>quit_proc</TT
+>, usually 
+	     are not used by a plugin and, so, usually are set to NULL,
+	     </P
+></LI
+><LI
+><P
+>the third of type <TT
+CLASS="FUNCTION"
+>query_proc</TT
+> 
+	     (usually named <TT
+CLASS="FUNCTION"
+>query()</TT
+>) is 
+	     called by Gimp at load time (see below),
+	     </P
+></LI
+><LI
+><P
+>the fourth of type <TT
+CLASS="FUNCTION"
+>run_proc</TT
+> 
+	     (usually named <TT
+CLASS="FUNCTION"
+>run()</TT
+>) is
+	     called when the procedure is to be run.
+	     </P
+></LI
+></UL
+><P
+>At start-up, Gimp looks for plugins in the plug_in_path
+	 (similar to the others) and looks for further information
+	 in the file pluginrc  and, for each plugin, calls 
+	 <TT
+CLASS="FUNCTION"
+>query()</TT
+>. The <TT
+CLASS="FUNCTION"
+>query()</TT
+> 
+	 function must register the plugin in the
+	 procedure database.
+	 </P
+><P
+>Gimp provides access to much of its internals through 
+	 a database of procedures where each plugin must insert 
+	 itself into. This enables a plugin to call GIMP internal 
+	 procedures or other plugins. For example, another plugin 
+	 may use <TT
+CLASS="FUNCTION"
+>gimp_run_procedure()</TT
+> 
+	 to run the randomize plugin.
+	 Again this facility can be dangerous so the plugin should
+	 check that the desired procedure is in the database before
+	 calling it.
+	 </P
+><P
+>To end, an example: <I
+CLASS="EMPHASIS"
+>the randomize plugin.</I
+>
+	 When the user selects randomize from the menu, Gimp calls
+	 the run() function passing the required parameters
+	 registered by the gimp_install_procedure() among whose
+	 is the "image"; run() launches a dialog box inquiring
+	 what type of randomization and the amount of "noise" the
+	 user wants, does the required transformation on the
+	 image and refreshes the display of the image.
+       </P
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN489"
+>Some notes</A
+></H3
+><P
+></P
+><UL
+><LI
+><P
+>The way plugins are "plugged" to the application is very 
+	     simple: 
+	     when the application starts it looks for plugins (sometimes
+	     just checking if the termination is <TT
+CLASS="FILENAME"
+>.so</TT
+>) 
+	     in certain defined directories. Additionally,
+	     the user can, in some cases, change the PATH variable 
+	     containing the directories to search or load and unload 
+	     plugins in run-time.
+	     </P
+></LI
+><LI
+><P
+>Thw <TT
+CLASS="FILENAME"
+>gmodule</TT
+> library is
+	     commonly used;</P
+></LI
+><LI
+><P
+>Most of the requirements described above are common
+	     to all this technologies although the implementation
+	     is different (e.g., a common interface, a mean of providing
+	     information about the plugin,...)
+	     </P
+></LI
+><LI
+><P
+>Netscape has a very rigid, totally defined API,
+	     Gnumeric has a small and partial for the plugin and
+	     a very loose one for the application. GIMP, is also
+	     very loose but gives a bit more of robustness.
+	     Although the purposes and contexts are different, the
+	     strategy Netscape uses is the most robust of the three.
+	     </P
+></LI
+></UL
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN502"
+>Example: a Gnumeric plugin</A
+></H2
+><P
+>Although Gnumeric has some flaws it provides most of
+       the core ideas of this paradigm.</P
+><P
+>The following plugin adds the famous factorial function 
+       (<TT
+CLASS="FUNCTION"
+>MyFactorial()</TT
+>) to Gnumeric. Here is the source
+       code (<A
+HREF="examples/plugin-myfact.c"
+TARGET="_top"
+><TT
+CLASS="FILENAME"
+>plugin-myfact.c</TT
+>
+       </A
+>).
+       </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;#include &#60;gnome.h&#62;
+   &nbsp;#include &#60;glib.h&#62;
+   &nbsp;
+   &nbsp;#include "gnumeric.h"
+  5&nbsp;#include "func.h"
+   &nbsp;#include "plugin.h"
+   &nbsp;
+   &nbsp;static Value *
+   &nbsp;func_fact (FunctionEvalInfo *ei, Value *argv [])
+ 10&nbsp;{
+   &nbsp;  int num = value_get_as_int (argv[0]);
+   &nbsp;  int res = 1;
+   &nbsp;
+   &nbsp;  while(num &#62; 1) {
+ 15&nbsp;    res *= num;
+   &nbsp;    num--;
+   &nbsp;  }
+   &nbsp;  return value_new_int (res);
+   &nbsp;}
+ 20&nbsp;
+   &nbsp;static int
+   &nbsp;can_unload (PluginData *pd)
+   &nbsp;{
+   &nbsp;	Symbol *sym;
+ 25&nbsp;
+   &nbsp;	sym = symbol_lookup (global_symbol_table, "MyFactorial");
+   &nbsp;	return sym-&#62;ref_count &#60;= 1;
+   &nbsp;}
+   &nbsp;
+ 30&nbsp;static void
+   &nbsp;cleanup_plugin (PluginData *pd)
+   &nbsp;{
+   &nbsp;	Symbol *sym;
+   &nbsp;
+ 35&nbsp;	g_free (pd-&#62;title);
+   &nbsp;	sym = symbol_lookup (global_symbol_table, "MyFactorial");
+   &nbsp;	if (sym)
+   &nbsp;		symbol_unref (sym);
+   &nbsp;}
+ 40&nbsp;
+   &nbsp;PluginInitResult
+   &nbsp;init_plugin (CommandContext *context, PluginData *pd)
+   &nbsp;{
+   &nbsp;	FunctionCategory *cat;
+ 45&nbsp;
+   &nbsp;/* The next line checks if the Gnumeric version being used corresponds
+   &nbsp;   to the required by the plugin */
+   &nbsp;	if (plugin_version_mismatch  (context, pd, GNUMERIC_VERSION))
+   &nbsp;		return PLUGIN_QUIET_ERROR;
+ 50&nbsp;
+   &nbsp;	cat = function_get_category (_("Fact PlugIn"));
+   &nbsp;	function_add_args (cat, "MyFactorial", "f", "number", NULL, func_fact);
+   &nbsp;
+   &nbsp;	pd-&#62;can_unload     = can_unload;
+ 55&nbsp;	pd-&#62;cleanup_plugin = cleanup_plugin;
+   &nbsp;	pd-&#62;title = g_strdup ("My PlugIn Plugin");
+   &nbsp;
+   &nbsp;	return PLUGIN_OK;
+   &nbsp;}</PRE
+></TD
+></TR
+></TABLE
+><P
+>The main function here is the <TT
+CLASS="FUNCTION"
+>init_plugin()</TT
+>
+      function. Line 51 establishes the category of the plugin; line 
+      52 adds the function <TT
+CLASS="FUNCTION"
+>func_fact()</TT
+> to
+      Gnumeric with the name <TT
+CLASS="FUNCTION"
+>MyFactorial</TT
+> and requiring
+      one argument. Next lines fill the remain positions of the
+      <TT
+CLASS="FUNCTION"
+>PluginData</TT
+> variable.
+      </P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN515"
+>Links and further information</A
+></H2
+><P
+><A
+HREF="http://www.netscape.org"
+TARGET="_top"
+>Netscape</A
+>
+      has a web page on plugins: 
+      <A
+HREF="http://home.netscape.com/plugins/"
+TARGET="_top"
+>      http://home.netscape.com/plugins/</A
+>
+      </P
+><P
+>Gnumeric can be found at 
+      <A
+HREF="http://www.gnome.org/projects/gnumeric/"
+TARGET="_top"
+>      http://www.gnome.org/projects/gnumeric/</A
+>.
+      </P
+><P
+>Gimp can be found at 
+      <A
+HREF="http://www.gimp.org"
+TARGET="_top"
+>http://www.gimp.org</A
+>.
+      </P
+><P
+>No clear documentation of plugins was found. However
+      Mozilla, Gnumeric and Gimp provide the source code so I
+      recomend looking at the files where the loading and
+      management of plugins are handled. Many of these applications
+      provide sample/test plugins with the source code. It is
+      also interesting to look at these samples for their 
+      structure<A
+NAME="AEN525"
+HREF="#FTN.AEN525"
+>[2]</A
+>.
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H1
+CLASS="SECT1"
+><A
+NAME="COMPONENTS"
+>Components</A
+></H1
+><P
+>This section focus on the Component-based paradigm. It 
+    presents a precise definition which is complemented after by
+    a list of characteristics that a component should fulfill.
+    Since <I
+CLASS="EMPHASIS"
+>middleware</I
+> plays an important role
+    in components, a short overview of CORBA is also done.
+    Finally, Bonobo is used as an example.</P
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN532"
+>Concept and examples</A
+></H2
+><P
+>There isn't much consensus in what constitutes a component.
+      A good yet still incomplete definition is Clemens Szyperski's
+      list of characteristic properties of a component:
+      </P
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><A
+NAME="COMPONENTDEF"
+><B
+>Component</B
+></A
+></DT
+><DD
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>A component is an indivisible unit of independent
+                deployment.
+                </P
+></LI
+><LI
+><P
+>A component is a unit of third-party composition.
+                </P
+></LI
+><LI
+><P
+>A component has no persistent state.
+                </P
+></LI
+></OL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/components.jpg"
+></IMG
+><DIV
+CLASS="CAPTION"
+><P
+>An illustration of the use of components</P
+></DIV
+></P
+></DIV
+><P
+>This definition may seem too general but basically constitutes
+      the core on what consists a component and has several implications.
+      This list will be complemented in the next section.
+      </P
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN552"
+>Some examples</A
+></H3
+><P
+>Imagine a big, complex and heterogeneous project divided
+	in different parts, each with its particular function and 
+	interacting with other parts of the project, being developed by
+	different teams. The final product may even be located in
+	different platforms and locations. This is a good example
+	in how component-based technology can be used. Basically, each
+	part constitutes a component. An interface contract for each 
+	component is established and interaction is done through these
+	interfaces. Each part shouldn't have to worry about the other
+	parts, in particular, their location and platform.
+	</P
+><P
+>Another example can be found in desktop environments.
+	Imagine a user writing a document or a web page where he
+	wants to integrate a graphic. Putting graphics functionality
+	in the word processor or web page editor would be overloading
+	them (how about audio, movie, barcharts...?). Doing it outside
+	and importing as an image is also not the best solution. But
+	if there is already a mechanism for handling that functionality
+	why not reuse it? Basically, the idea is to "embed" the
+	graphics mechanism in the word processor or web page editor
+	(something like: "when handling this data use this particular
+	mechanism"). But to have a good interaction between mechanisms
+	we need independence, interface contracts and again components
+	appear as a good solution for this.
+	</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN556"
+>Discussing and complementing the definition</A
+></H2
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="KEYASP"
+>Key aspects and raised questions</A
+></H3
+><P
+>First, let's refer to the aimed key aspects in
+        component-based development.
+        </P
+><P
+></P
+><UL
+><LI
+><P
+>Standardized parts and services (both through the
+	    standardization of components and the environment in which
+	    they operate.)
+	    </P
+></LI
+><LI
+><P
+>Minimal or no contact between entities designing
+  	    components; decoupling of development efforts.
+	    </P
+></LI
+><LI
+><P
+>Access to practical (re)use both internal and external
+	    through standardized interoperability, configurability, and
+	    deployment.
+	    </P
+></LI
+><LI
+><P
+>Independent variability through documentation of 
+	    components 'seams' (the interfaces used and exposed).
+	    </P
+></LI
+><LI
+><P
+>Source code for custom needs; binary components for
+	    standard needs.
+	    </P
+></LI
+><LI
+><P
+>A strict emphasis on component assembly first;
+	    manual coding second.
+	    </P
+></LI
+><LI
+><P
+>A robust mechanism for the delivery of architectures,
+	    frameworks, and services.
+	    </P
+></LI
+></UL
+><P
+>But this implies several questions:</P
+><P
+></P
+><UL
+><LI
+><P
+>How "loose" do we want a component to be? Could
+            it be dependent from other components or context-based?
+            At first glance this doesn't seem desirable since it will 
+            minimize reuse which is one of the main aspects desired.
+            </P
+></LI
+><LI
+><P
+>But then how do we minimize problems occurring from 
+            deployment and reuse? These problems involve dependencies 
+            both from the environment and other components.
+            </P
+></LI
+><LI
+><P
+>How to minimize communication between parts and 
+            dependencies on the developments of the several parts?
+            </P
+></LI
+><LI
+><P
+>How to handle third-party interoperability? In order
+            to avoid problems with versioning it is necessary a "black-box"
+            view of the component but that is not enough. The third-party 
+            still has to have a guarantee on the services provided by the 
+            component.
+            </P
+></LI
+><LI
+><P
+>How to handle heterogeneity between parts (for example,
+            different languages, different platforms,...)?
+            </P
+></LI
+><LI
+><P
+>What happens if the component has persistent state?
+            Having persistent state would make two copies of a component
+            different: is that desirable?
+            </P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN590"
+>Looking at the definition</A
+></H3
+><P
+>The key aspects and these questions leads us to some 
+        discussion on the three points presented above.
+        </P
+><P
+>As a component is an unit of independent deployment it needs
+        to be well-separated from the environment and even from other
+        components. In other words, the component needs to encapsulate
+        its constituent features. Also, it has to be totally deployed.
+        </P
+><P
+>The second point relates to the composition with other
+        components by a party exterior to at least one component.
+        To couple with that, the component has to be self-contained and
+        specify exactly what it provides and requires by means of well-defined
+        interfaces and implementation hiding.
+        </P
+><P
+>The reason for the third point has to do with the fact
+        that a component should be indistinguishable from its copies.
+        By complying to this it is then possible that there is, at most, 
+        one copy of each component loaded in each process.
+        </P
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN596"
+>But this is incomplete</A
+></H3
+><P
+>Dion Hinchcliffe and Michael J. Gaffney complemented the three
+       points above with nine other points (see <A
+HREF="#COMPLINKS"
+><I
+>Links and further information</I
+></A
+>).
+       These twelve items constitute what they believe are the 
+       <SPAN
+CLASS="QUOTE"
+>"unequivocal requirements a software entity must meet in
+       order to claim to be, dare we say it, a 'true' component"</SPAN
+>.
+       </P
+><P
+>These nine added items are:</P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>A component must be loosely coupled with other
+	   components via interface definitions and implementation
+	   separation.
+           </P
+></LI
+><LI
+><P
+>A component must explicitly identify both the interfaces
+	    it uses and exposes, and/or the service categories it uses
+	    and exposes.
+	    </P
+></LI
+><LI
+><P
+>A component has an unbreakable contract with all of its 
+	    clients by virtue of the services its interface promises to 
+	    deliver (design by contract).
+	    </P
+></LI
+><LI
+><P
+>A component must be deliverable in binary form (black box).
+  	    </P
+></LI
+><LI
+><P
+>A component must use and expose services through 
+	    standardized middleware services (DCOM, CORBA, JavaBeans, etc.)
+	    </P
+></LI
+><LI
+><P
+>A component must be configurable at design-time/run-time
+  	    through a standardized interface (such as ActiveX and JavaBeans
+	    property sheets or standard configuration files).
+	    </P
+></LI
+><LI
+><P
+>A component must be interoperable with other components
+	    across processes, machines, networks, languages, operating
+	    systems, transaction environments, and tools.
+	    </P
+></LI
+><LI
+><P
+>A component should make use of standardized 
+	    infrastructure services such as security, licensing, 
+	    versioning, life-cycle management, visual assembly,
+	    event notification, configuration, scripting, metadata,
+	    introspection, persistence, relationships, administration,
+	    management, debugging, and installation.
+	    </P
+></LI
+><LI
+><P
+>A component should be able to wire itself into a
+	    collaboration with other components solely via 
+	    design-time/run-time configuration.
+	    </P
+></LI
+></OL
+><P
+>The last two items are desirable but not absolutely
+        necessary as well as they are difficult to satisfy. The
+        other seven plus the three described in the beginning 
+        enable the realization of the key aspects of component-based
+        development presented above.</P
+><P
+>Very roughly, the keywords are: <I
+CLASS="EMPHASIS"
+>interface
+        contracts</I
+>, <I
+CLASS="EMPHASIS"
+>middleware</I
+>, 
+        <I
+CLASS="EMPHASIS"
+>configurability</I
+> and
+        <I
+CLASS="EMPHASIS"
+>independent, "black-box"-view unit</I
+>.
+        </P
+><P
+>But why comply with all these requirements? For example,
+        why use strategies like CORBA when it doesn't seem to be
+        necessary? Because if we want to make use of the benefits
+        that this technology enables, not complying with just one of
+        the 10 points (the other two, as was said are not necessary
+        but are very desirable) will make the component less reusable
+        and adaptable to the situation. In this case, if later on
+        there would be a need to have different platforms, for example,
+        wrappers would have to be written to do the work this technology
+        is responsible for.</P
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN628"
+>Components and Objects</A
+></H3
+><P
+>A final note regarding components Vs objects.</P
+><P
+>Components and objects, at first glance, are very similar
+        concepts. There exists the image of entities, independent units that
+	interact with each other, associated with both and, both are
+	paradigms of development. 
+        But there are, however, some fundamental differences.
+        </P
+><P
+>Here is a table showing the main differences between
+	both concepts:</P
+><DIV
+CLASS="INFORMALTABLE"
+><P
+></P
+><TABLE
+BORDER="1"
+CLASS="CALSTABLE"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+>Components</TH
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+>Objects</TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>all copies are equal</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>it has a unique identity (instantiation)</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>it has no persistent state</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>it can have persistent state</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>it encapsulates its features but not its state</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+>it encapsulates its state and behavior</TD
+></TR
+></TABLE
+><P
+></P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN649"
+>Middleware and CORBA</A
+></H2
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/corba.jpg"
+></IMG
+><DIV
+CLASS="CAPTION"
+><P
+>A request passing from client to object implementation
+            (from the OMG documentation)
+            </P
+></DIV
+></P
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN657"
+>Middleware: what is and why it is essential to components</A
+></H3
+><P
+>Middleware is now a very popular term and is basically used 
+        to refer to software "that sits in the middle, connecting diverse
+        (and usually preexisting) programs together". In other words, a
+        separate product that acts as a glue between two applications.
+        </P
+><P
+>The necessity for middleware strategies appeared with
+        distributed computing. Database systems have been one of the
+        most important areas in this field (see <A
+HREF="#COMPLINKS"
+><I
+>Links and further information</I
+></A
+>).
+        The complexity involved in the communication between software
+        parts residing in different machines (for example, a database
+        server, an application server and the clients) made it necessary
+        that some extra software was added to handle this communication.
+        </P
+><P
+>Distributed computing is now very widely used. There is a 
+        need for strategies that simplify the developer's work (for 
+        example, handling the message passing protocol) but provide good
+        flexibility. Using object-oriented principles, Microsoft developed
+        DCOM, Java developed JavaBeans and OMG, the CORBA architecture.
+        </P
+><P
+>But these are not always the best solutions for a 
+        project. There are several strategies and the following
+        list presents the main ones except for CORBA which is
+        described in the following section.
+        </P
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><B
+>Socket programming</B
+></DT
+><DD
+><P
+></P
+><UL
+><LI
+><P
+>the communication between the application
+                  components is done using sockets directly;
+                  </P
+></LI
+><LI
+><P
+>the API is very low level, making the
+                  overhead associated very low, thus, resulting
+                  in more efficient applications;
+                  </P
+></LI
+><LI
+><P
+>it is not well suited to handle complex data
+                  types especially regarding different types of 
+                  machine and/or programming languages and so
+                  is unsuitable for developing complex applications
+                  </P
+></LI
+></UL
+></DD
+><DT
+><B
+>Remote Procedure Call (RPC)</B
+></DT
+><DD
+><P
+></P
+><UL
+><LI
+><P
+>function-oriented interface to
+                  socket-level communications;
+                  </P
+></LI
+><LI
+><P
+>and so is easier to use than raw socket
+                  programming;
+                  </P
+></LI
+><LI
+><P
+>it is powerful enough to be the basis
+                  for many client/server applications;
+                  </P
+></LI
+><LI
+><P
+>a standard RPC protocol exists, although
+                  there are some incompatible implementations;
+                  </P
+></LI
+></UL
+></DD
+><DT
+><B
+>Microsoft Distributed Component Object Model 
+            (DCOM)</B
+></DT
+><DD
+><P
+></P
+><UL
+><LI
+><P
+>capabilities similar to CORBA</P
+></LI
+><LI
+><P
+>there is a good support on Microsoft
+                  Operating Systems but this support is sparse
+                  outside;</P
+></LI
+><LI
+><P
+>thus making it very good for projects
+                  over Microsoft products but not well-suited
+                  for cross-platform;
+                  </P
+></LI
+></UL
+></DD
+><DT
+><B
+>Java Beans and Java Remote Method Invocation 
+            (RMI)</B
+></DT
+><DD
+><P
+></P
+><UL
+><LI
+><P
+>CORBA-like architecture</P
+></LI
+><LI
+><P
+>supports the passing of objects by value
+                  (CORBA, for example, only passes references to
+                  objects);
+                  </P
+></LI
+><LI
+><P
+>but is a Java-only solution and, so, is
+                  not the best solution if different languages
+                  are used;
+                  </P
+></LI
+></UL
+></DD
+></DL
+></DIV
+><P
+>XML is also playing an important role in middleware. It is
+        an easily parsed, human readable, simple and, most important, standard
+        and independent format. These characteristics are very useful to 
+        connect heterogeneous programs together, both for data 
+        representation and communication protocol.
+        </P
+><P
+>Middleware is what handles the communication between
+        components. The complexity and flexibility required by
+        component designing but still the desire that it is simple 
+        to use and implement leads to a middleware solution that: 
+        </P
+><P
+></P
+><UL
+><LI
+><P
+>can handle complex data types and communication
+            </P
+></LI
+><LI
+><P
+>enables connecting different platforms, in 
+            particular, different operating systems, hardware
+            and software
+            </P
+></LI
+><LI
+><P
+>enables the communication between different
+            languages
+            </P
+></LI
+><LI
+><P
+>provides all the above in a standard way
+            </P
+></LI
+><LI
+><P
+>hides from the developer the complexity of
+            communication (for examples, the message passing
+            passing protocol) and of complying with the
+            items above
+            </P
+></LI
+></UL
+><P
+>Probably, the product that fulfills best the items 
+        above is CORBA since DCOM is very bounded to the platform
+        and JavaBeans to the language.
+        </P
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN721"
+>CORBA</A
+></H3
+><P
+>CORBA, or Common Object Request Broker Architecture, is 
+        defined by OMG (Object Management Group). It is a popular 
+        architecture and specification for creating software 
+        components. Its purpose is to handle interoperability between
+        different hardware and software products, in a standard and 
+        transparent way, thus making it possible for two different 
+        applications from different vendors, in different computers, 
+        operating systems, programming languages and networks to 
+        communicate with each other.
+        </P
+><P
+>It's an object-oriented architecture and its building 
+        blocks are:
+        </P
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><B
+>OMG Interface Definition Language, OMG IDL</B
+></DT
+><DD
+><P
+>Basically, is used to specify interfaces 
+              between CORBA objects.
+              </P
+><P
+>Moreover, defines mappings for a variety of different 
+              languages and which purpose is to abstract from the
+              languages being used to implement the components
+              so that they all speak a common language.              
+              </P
+><P
+>It's not an implementation language; its sole 
+              purpose is to define interfaces.
+              </P
+></DD
+><DT
+><B
+>The Object Request Broker or ORB</B
+></DT
+><DD
+><P
+>A software component whose purpose is to
+              facilitate communications between objects by, for
+              example, providing capabilities like:
+              </P
+><P
+></P
+><UL
+><LI
+><P
+>to locate a remote object, given an
+                  object reference
+                  </P
+></LI
+><LI
+><P
+>marshaling of parameters and return
+                  values to and from remote method invocations
+                  </P
+></LI
+></UL
+><P
+>So, basically, ORBs handle requests between
+              applications enabling abstraction of where the
+              program that receives the request and the one
+              sending are.
+              </P
+></DD
+><DT
+><B
+>The standard protocol IIOP, Internet
+            InterORB Protocol</B
+></DT
+><DD
+><P
+>Provides a standard communication between
+              different ORBs above TCP/IP. Other protocols
+              exist, and not only over TCP/IP,  but this one
+              is the most popular.
+              </P
+><P
+>To facilitate the communication between
+              objects, Object References are used (in the
+              IIOP case, these are called <I
+CLASS="EMPHASIS"
+>Interoperable
+              Object References, IOR</I
+>): when a
+              component of an application wants to access a
+              CORBA object, it first obtains an OR for that
+              object. Using the OR, the component can then
+              invoke methods on the object.
+              </P
+></DD
+></DL
+></DIV
+><P
+>CORBA provides, with these building blocks,
+        <I
+CLASS="EMPHASIS"
+>independence of language</I
+> - CORBA 
+        objects and clients can be implemented in
+        any language that exists IDL for it, which is a
+        big set, and need not know which language was
+        used to implement other CORBA objects that they
+        talk to - and <I
+CLASS="EMPHASIS"
+>independence of platform</I
+>
+        - CORBA objects can be used on any platform for which 
+        there is a CORBA ORB implementation.
+        </P
+><P
+>It is said that a component is a 
+        <I
+CLASS="EMPHASIS"
+>server</I
+> if it contains CORBA
+        objects whose services are accessible to other
+        objects.
+        And, naturally, it is said to be a 
+        <I
+CLASS="EMPHASIS"
+>client</I
+> if it accesses services
+        from some other CORBA object.
+        Of course, a component can act both as a client and
+        a server.
+        </P
+><P
+>Related with these terms are the 
+        <I
+CLASS="EMPHASIS"
+>stubs</I
+> and <I
+CLASS="EMPHASIS"
+>skeletons</I
+>:
+        </P
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><B
+>client stub</B
+></DT
+><DD
+><P
+>a small piece of code that allows a client
+              component to access a server component
+              </P
+></DD
+><DT
+><B
+>server skeletons</B
+></DT
+><DD
+><P
+>pieces of code that one "fills in"
+              when implementing a server
+              </P
+></DD
+></DL
+></DIV
+><P
+>Finally, the Object Management Group established the
+        Object Management Architecture (OMA) of which CORBA
+        is a part.
+        OMA consists of:
+        </P
+><P
+></P
+><UL
+><LI
+><P
+>ORB function<A
+NAME="AEN770"
+HREF="#FTN.AEN770"
+>[3]</A
+>
+            </P
+></LI
+><LI
+><P
+>CORBAservices - object services</P
+></LI
+><LI
+><P
+>CORBAfacilities - common facilities</P
+></LI
+><LI
+><P
+>domain interfaces</P
+></LI
+><LI
+><P
+>application objects</P
+></LI
+></UL
+><P
+>It is important to note that these include a set
+        standard services, compliant with CORBA, containing
+        directory and naming services and transaction services.
+        </P
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN781"
+>An example: BONOBO</A
+></H2
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/bonobo.jpg"
+></IMG
+><DIV
+CLASS="CAPTION"
+><P
+>Part of one of the screenshots at GNOME's webpage.
+            It shows miscellaneous embedding (for example, playing
+            GnoMines on the spreadsheet...).</P
+></DIV
+></P
+></DIV
+><BLOCKQUOTE
+CLASS="BLOCKQUOTE"
+><P
+>"BONOBO is the GNOME architecture for creating
+        reusable software components and compound documents."
+        </P
+></BLOCKQUOTE
+><P
+>GNOME implemented BONOBO in order to comply with
+      interoperability between different applications in the
+      desktop (e.g., embed a graphics object in a word processor
+      document).
+      </P
+><P
+>BONOBO is basically a set of CORBA interfaces and 
+      an implementation in GNOME/GTK+ of these interfaces that 
+      are designed to be simple to use and hide CORBA and
+      between-components protocol used. An application uses
+      these interfaces to export its functionality or integrate 
+      other components functionality making it possible to
+      edit a graphic or even play GnoMines in a spreadsheet.
+      </P
+><P
+>BONOBO is targeted both at the developer and the user.
+      </P
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN794"
+>Target: Developer</A
+></H3
+><P
+>The GNOME project is very large and consists
+        of multiple applications. This applications are
+        developed by several people, in particular, hobbyists
+        whose contribution can disappear at any point.
+        </P
+><P
+>Component software helps reduce the complexity
+        of applications by reducing the amount of information
+        a programmer needs to know about the system.
+        </P
+><P
+>The component software also enables the
+        developer to build larger, more complex applications
+        by gluing different components together.
+        </P
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN799"
+>Target: User</A
+></H3
+><P
+>UNIX provides very powerful mechanisms to a user
+        with small programs like <B
+CLASS="COMMAND"
+>sed</B
+>, 
+        <B
+CLASS="COMMAND"
+>awk</B
+>, <B
+CLASS="COMMAND"
+>cat</B
+> and 
+        <B
+CLASS="COMMAND"
+>sort</B
+> and pipes that enables
+        this programs to be chained, where the output from the
+        first is used as the input for the second. This
+        enables the user to do very powerful actions in a
+        simple command line.
+        </P
+><P
+>BONOBO uses this as an image and applies it
+        to desktop environments. Instead of building applications
+        more and more complex and with every possible 
+        functionality, simply reuse what is already built
+        and <SPAN
+CLASS="QUOTE"
+>"give to Caesar what belongs to Caesar"</SPAN
+>.
+        For example, writing a document in a word processor and
+        adding data from a spreadsheet program.
+        What is meant with the above is that, instead of having
+        to leave the word processor, launch the spreadsheet, copy
+        the data and paste it to the text, being able to insert
+        data directly from the word processor. The word processor
+        will include the data from the spreadsheet and launch
+        the program. Furthermore, the user would be able to edit
+        the data included from the spreadsheet directly from the
+        word processor or could have the data refreshed when
+        it was changed in the spreadsheet (imagine, for example,
+        daily reports).        
+        </P
+><P
+>The term for this is 
+        <I
+CLASS="EMPHASIS"
+>Document-Centric world</I
+>.
+        </P
+><P
+>BONOBO is similar to the OLE strategy in Microsoft.</P
+></DIV
+><DIV
+CLASS="SECT3"
+><HR><H3
+CLASS="SECT3"
+><A
+NAME="AEN811"
+>Interesting characteristics of BONOBO</A
+></H3
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><B
+>The interfaces</B
+></DT
+><DD
+><P
+>All BONOBO components must implement the
+              <B
+CLASS="COMMAND"
+>Bonobo::Unknown</B
+> interface. 
+              This interface consists of a function 
+              <TT
+CLASS="FUNCTION"
+>query_interface()</TT
+> and the pair 
+              <TT
+CLASS="FUNCTION"
+>ref()</TT
+>/<TT
+CLASS="FUNCTION"
+>unref()</TT
+>.
+              The first is used to check if an interface is
+              implemented and to obtain the required interface.
+              The pair is described in the next point.
+              It is by these interfaces that the component states
+              if it is embedable (for example, it is embedable if
+              it provides the 
+              <B
+CLASS="COMMAND"
+>Bonobo::Embedable</B
+> interface),
+              if it is storable, if it can be edit in place, etc.
+              </P
+></DD
+><DT
+><B
+>Ref()/unref()</B
+></DT
+><DD
+><P
+>Components keep track on if their services
+              are being used by the <TT
+CLASS="FUNCTION"
+>ref()/unref()</TT
+>
+              functions, the first incrementing the counter when
+              a request is received, the second decrementing
+              when the request has been fulfilled.
+              </P
+></DD
+><DT
+><B
+>Storage and compound documents</B
+></DT
+><DD
+><P
+>Documents containing heterogeneous data
+              can still be stored by using compound documents
+              and requesting that the components responsible for
+              that type of data do the storage (by providing the
+              respective interfaces)
+              </P
+></DD
+><DT
+><B
+>Containers Vs containee/component</B
+></DT
+><DD
+><P
+>There are two types of "components": the ones
+              that provide services (the containee/component) and
+              the ones that use it (the containers). Looking at
+              the example mentioned before, the word processor
+              is a container and the spreadsheet program is the
+              containee/component. A program can act as both parts.
+              </P
+></DD
+><DT
+><B
+>GOAD</B
+></DT
+><DD
+><P
+>It is the most common way for components to
+              be registered and, thus, being found by others.</P
+></DD
+><DT
+><B
+>Requirements</B
+></DT
+><DD
+><P
+>BONOBO addresses the requirements for:</P
+><P
+></P
+><UL
+><LI
+><P
+>creating compound documents</P
+></LI
+><LI
+><P
+>object linking</P
+></LI
+><LI
+><P
+>object embedding</P
+></LI
+><LI
+><P
+>service activation</P
+></LI
+><LI
+><P
+>storage facilities</P
+></LI
+><LI
+><P
+>menu and toolbar negotiation (merging)</P
+></LI
+><LI
+><P
+>printing</P
+></LI
+></UL
+></DD
+></DL
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="COMPLINKS"
+>Links and further information</A
+></H2
+><P
+><A
+HREF="http://www.cetus-links.org/"
+TARGET="_top"
+>Cetus links</A
+> 
+      is a site devoted to providing links and information on 
+      Objects and Components.
+      At the time of this writing, they stated having 18873 links
+      related with these subjects. Among this were the following:
+      </P
+><P
+></P
+><UL
+><LI
+><P
+><A
+HREF="http://www.sdmagazine.com/breakrm/features/s995f2.shtml"
+TARGET="_top"
+>Components and Objects Together</A
+>
+          by Clemens Szperski who also wrote a popular book on
+          components. 
+          </P
+></LI
+><LI
+><P
+><A
+HREF="http://www.objectnews.com/components_where_are_they.htm"
+TARGET="_top"
+>Components: Where Are They?</A
+>
+          by Dion Hinchcliffe and Michael J. Gaffney that presents 
+          a very concrete study on components and from where the 
+          requirements and characteristics presented in this document 
+          where most based.
+          </P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cbdiforum.com/index.php3"
+TARGET="_top"
+>CDBi FORUM</A
+>
+          stands for Component-Based Development and Integration Forum
+          and provides several interesting and useful informations about
+          components.
+          </P
+></LI
+></UL
+><P
+><A
+HREF="http://www.networkmagazine.com/static/tutorial/interoperability/9909tut.htm"
+TARGET="_top"
+>Lesson 134: Middleware</A
+> by 
+      Jonathan Angel provides a good overview of 
+      middleware. It focuses on the evolution of this software starting
+      from the appearance of distributed computing to distributed objects
+      with CORBA, JavaBeans and DCOM. It also makes a short 
+      reference to XML.
+      </P
+><P
+>As for CORBA, there is a good number of documentation on
+      CORBA. A good place to start is the 
+      <A
+HREF="http://www.omg.org"
+TARGET="_top"
+>OMG homepage</A
+>.</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H1
+CLASS="SECT1"
+><A
+NAME="COMPARING"
+>What to choose</A
+></H1
+><P
+>"Plugins" and "components" are two words that are very often used
+    in computing world. But when someone searches for information on them,
+    he will find a big amount of references but hardly any concrete and
+    elucidative concept.
+    </P
+><P
+>The problem regarding plugins is that, most of the information
+    one finds is dependent of a particular implementation. A typical
+    definition of a plugin would be something like "A piece of software
+    to be added to application X to do the Y-type of jobs". Or, when one
+    finds a definition that is independent of application X, Y or Z, it
+    would be something like "A piece of software to be plugged to an
+    application" that, although correct, doesn't carry much information.
+    </P
+><P
+>Components information, on the other hand, is usually so abstract
+    and general that one can regard almost everything as being components. 
+    And, the same way there wasn't much consensus, on the beginning, on what 
+    constitutes an object, there isn't also much consensus on what a component 
+    is.
+    </P
+><P
+>One of the main purposes of this tutorial was to achieve a precise,
+    short and clear definition on both paradigms. The goal was to get a
+    description general enough not to be tied to implementation issues but
+    yet precise enough to characterize some piece of software as being
+    an implementation of this concept and providing a certain set of
+    functionalities instead of just an adjective.</P
+><P
+>But it is quickly found that a definition, as good as
+    it might be, is not enough to characterize a paradigm. For example,
+    if a user wants to program in an object-oriented way, knowing
+    what an object is in this context, is not enough. To learn how
+    to program in an object-oriented way, the user also needs to
+    know the notions of instances and classes, signature/abstract,
+    heritage, inclusion of all the methods and data that identify 
+    with it and, even before that, modularity and hiding the 
+    implementation from outside the object. These are all rules
+    and characteristics that state to what an object-oriented
+    application should comply to be considered one.
+    After learning object-oriented principles like the above and 
+    object-oriented languages like Java or C++ it is very hard
+    to imagine it in another way. But if, for example, it had been
+    characterized the same way but without heritage would that
+    impede that the resulting blocks of software could still be
+    called objects?
+    Of course not. So why this set of rules?
+    </P
+><P
+>Because of the behavior that is expected. With the
+    concept comes a list of wished functionality. It is
+    expected that we can say that this "object", 
+    <I
+CLASS="EMPHASIS"
+>Mickey</I
+>, is an instance of the "class" 
+    <I
+CLASS="EMPHASIS"
+>Mouse</I
+> but it also inherits characteristics 
+    from the "interface" <I
+CLASS="EMPHASIS"
+>Comic</I
+>.
+    It is also expected that it includes the data related to it 
+    (relevant to the case) and ways to interact with it, that is, 
+    methods. For example, its age and a method to ask to resolve 
+    a mystery!
+    This set of rules not only comply with the general concept
+    but also help to precise it and guarantee that the product
+    will provide the expected functionality in a standard way.
+    </P
+><P
+>But the user also needs the environment to develop.
+    Furthermore, having just the theory on the paper is not
+    very useful. Anyone who learns object-oriented programming
+    does so while learning Java, C++ or some similar 
+    object-oriented language. Many people when referring to
+    object-oriented programming are actually referring to one
+    of the above languages.
+    It is very difficult to picture OO without some details of
+    the OO language most commonly used by the user. 
+    </P
+><P
+>So, arriving to a definition for plugins-based and
+    component-based programming is not enough and a set of
+    rules were compiled or elaborated to achieve this.
+    Also, there was some emphasis on the implementation
+    details so that the reader can more easily picture
+    these types of programming and develop immediately
+    with them.
+    </P
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN890"
+>The aim of these paradigms</A
+></H2
+><P
+>There are always problems that are better solved
+      with one strategy than another one. A script language
+      is not very good to write Data Mining applications or
+      complex mathematical algorithms or an application like
+      a spreadsheet program. It is good for system management,
+      automatic jobs and setting configurations.
+      </P
+><P
+>Plugins are good for applications that have to
+      do tasks from a big and heterogeneous set. It is even
+      more powerful because it assumes that this set is not
+      known before hand. This enables further tasks to be assigned
+      to the application as long as the functionality to do
+      that task is provided. This brings several advantages:
+      </P
+><P
+></P
+><UL
+><LI
+><P
+>a lighter application since all the complexity
+          of the tasks is divided through the plugins</P
+></LI
+><LI
+><P
+>the code to handle a task is only loaded when
+          needed. If the set is big and not all the tasks
+          are being done this means less space used in memory.
+          </P
+></LI
+><LI
+><P
+>flexibility in the functionality added to the
+          application by plugins
+          </P
+></LI
+></UL
+><P
+>At CERN this type of applications are found very
+      frequently. The data generated is heterogeneous and is
+      common to find: <SPAN
+CLASS="QUOTE"
+>"if this is a particle a do A, a
+      particle b do B, ..., a particle z do Z"</SPAN
+>.
+      Having enormous <TT
+CLASS="FUNCTION"
+>case</TT
+> columns is
+      space consuming, complicated and provides few flexibility.
+      Plugins may be a good way to handle this. There are
+      also other situations similar where plugins can be a
+      good solution.
+      </P
+><P
+>Components are better aimed at complex, distributed
+      projects but can also apply to projects that usually sit
+      in only one computer but whose architecture OS clearly
+      divided in several separate parts that interact with
+      each other. It provides, among other things
+      (see <A
+HREF="#KEYASP"
+><I
+>Key aspects and raised questions</I
+></A
+> in <A
+HREF="#COMPONENTS"
+><I
+>Components</I
+></A
+>):
+      </P
+><P
+></P
+><UL
+><LI
+><P
+>standardized parts and services</P
+></LI
+><LI
+><P
+>few need of contact between teams designing
+          components
+          </P
+></LI
+><LI
+><P
+>independence of implementation and location</P
+></LI
+><LI
+><P
+>a good way to design the architecture and
+          abstract from the implementations details
+          </P
+></LI
+></UL
+><P
+>At CERN it is common to find big and complex distributed
+      projects. Some of these projects even have teams
+      in other places in the world developing parts of the
+      project. With the importance of these projects and
+      the volume of actions that the final product will have
+      to perform, a good design and separation between parts
+      is probably the most important aspect of the project.
+      If this is well done, changes can even be made to
+      one part without affecting the other parts.
+      </P
+><P
+>But</P
+><DIV
+CLASS="IMPORTANT"
+><P
+></P
+><TABLE
+CLASS="IMPORTANT"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/important.gif"
+HSPACE="5"
+ALT="Important"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>Care must be taken before choosing to use
+        them. Each has its advantages and disadvantages.
+        If it is the right choice to use one of them or which 
+        one to use depends on the project.
+        </P
+></TD
+></TR
+></TABLE
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN920"
+>Why comply with the sets of rules proposed?</A
+></H2
+><P
+>When developing either plugins or components,
+      there is a good list of requirements that must be met
+      and that were enumerated in the previous sections.
+      </P
+><P
+>It may seem, however, that some of this requirements
+      can be dispensed in some occasions.
+      For example, why use strategies like CORBA when it
+      doesn't seem to be necessary? For the same reasons used
+      at the beginning of this section to justify the need
+      to establish them.</P
+><P
+>If we want to make use of the benefits that this
+      technology enables, not complying with just one of the
+      requirements will make the plugin/component-based strategy
+      less robust and flexible. Regarding the example of the use
+      of CORBA-like strategies, if later on there would be a need
+      to have different platforms, for example, wrappers would
+      have to be written to do the work this technology is 
+      responsible for.
+      </P
+><P
+>Furthermore, Informatics Technology has evolved so
+      much that the enumerated requirements can be handled with
+      much less effort for the developer. The power that
+      CORBA gives to application overcomes, in a good amount,
+      the effort to use it.
+      </P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN926"
+>Plugins and components: 
+      two popular and recent technologies</A
+></H2
+><P
+>Plugins and components, although they are very recent,
+      are now very popular. A search on the web will present
+      thousands of references to it.
+      </P
+><P
+>Most of the concepts used are not new but only
+      recently technology provided the means for them to evolve.
+      Plugins and components would not be what they are without
+      Middleware and shared libraries and many other facilities
+      available today.
+      </P
+><P
+>But although they are so recent, products like
+      Netscape, AutoCAD, the Windows and Linux desktops and
+      many others, are using them as an important part of the
+      product.
+      </P
+><P
+>Although they are combined in this document,
+      plugins and components are very different and each
+      has its particular advantages and disadvantages as
+      also having different scopes. Nevertheless there are
+      come common keywords that pop out in both.
+      </P
+><DIV
+CLASS="GLOSSLIST"
+><DL
+><DT
+><B
+>Modularity</B
+></DT
+><DD
+><P
+>separate a big problem in a set of small
+            problems: their results will be the building
+            blocks from which the final application is built
+            </P
+></DD
+><DT
+><B
+>Encapsulation</B
+></DT
+><DD
+><P
+>all the functionality needed by an unit 
+            should be integrated inside: thus, the unit can
+            be deployed independently as an all
+            </P
+></DD
+><DT
+><B
+>Interface contracts</B
+></DT
+><DD
+><P
+>specify precisely how parts can communicate
+            with each other: being a contract, both parts must
+            respect the commitment they made by offering the
+            functionality stated and keeping the interfaces has
+            static as possible
+            </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H2
+CLASS="SECT2"
+><A
+NAME="AEN945"
+>Finally</A
+></H2
+><P
+>It was the purpose of this document to be a tutorial
+      to this interesting and popular technology. 
+      There was an effort that this tutorial would
+      have both a good and complete theoretic part with precise and 
+      correct definitions and a complete characterization
+      of the paradigms, and a useful practical part by focusing
+      on important implementation aspects and providing simple
+      examples and references to useful tools and products. 
+      There was also an effort in presenting
+      the information in a clear way that would be both
+      complete and motivating.
+      </P
+><P
+>Although it was the purpose of this tutorial to
+      present a complete theory, this document is still an
+      introduction. Please refer to the links and references
+      provided throughout the document for a deeper 
+      understanding.
+      </P
+></DIV
+></DIV
+></DIV
+><H3
+>Notes</H3
+><TABLE
+BORDER="0"
+CLASS="FOOTNOTES"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.PLUG-IN"
+HREF="#PLUG-IN"
+>[1]</A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>It is 
+      also very usual to write <I
+CLASS="EMPHASIS"
+>Plug-in</I
+> instead 
+      of Plugin.</P
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN525"
+HREF="#AEN525"
+>[2]</A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>  
+      <SPAN
+CLASS="QUOTE"
+>"Use the Force -- Read the source!"</SPAN
+></P
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="5%"
+><A
+NAME="FTN.AEN770"
+HREF="#AEN770"
+>[3]</A
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+WIDTH="95%"
+><P
+>CORBA's role is to implement this</P
+></TD
+></TR
+></TABLE
+></BODY
+></HTML
+>
